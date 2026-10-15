@@ -106,7 +106,8 @@ h1 em, h2 em { font-style: italic; font-weight: 300; color: var(--acc, var(--bra
 @media (max-width: 900px) { .nav a:not(.btn) { display: none; } .logo span { display: none; } }
 
 /* photo slots */
-.photo { background-size: cover; background-position: center; }
+.photo { position: relative; overflow: hidden; background-size: cover; background-position: center; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; }
 .tex-hero {
   background:
     radial-gradient(900px 520px at 78% 16%, rgba(184,150,79,.24), transparent 62%),
@@ -433,8 +434,16 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 </footer>
 
 <script>
-/* Project photos. Paste an image URL or data URI for any slot and it replaces the texture. */
-var PHOTOS = { hero: "", interior: "", exterior: "", repairs: "", bathroom: "" };
+/* Project photos (Unsplash, free to use). Swap any URL for your own project photo.
+   If an image cannot load, the textured panel behind it shows instead. */
+var UNSPLASH = "https://images.unsplash.com/photo-";
+var PHOTOS = {
+  hero:     UNSPLASH + "1598928506311-c55ded91a20c?fm=jpg&q=80&w=2200&auto=format&fit=crop",
+  interior: UNSPLASH + "1507089947368-19c1da9775ae?fm=jpg&q=80&w=1400&auto=format&fit=crop",
+  exterior: UNSPLASH + "1777106322601-578dc9213ace?fm=jpg&q=80&w=1400&auto=format&fit=crop",
+  repairs:  UNSPLASH + "1606676539940-12768ce0e762?fm=jpg&q=80&w=1400&auto=format&fit=crop",
+  bathroom: UNSPLASH + "1771929662486-f793e08f0f16?fm=jpg&q=80&w=1400&auto=format&fit=crop"
+};
 
 var firebaseConfig = {
   apiKey: "AIzaSyCkDfCIXCnIiqiME2iM1hleguiKHhOfLG4",
@@ -448,7 +457,14 @@ var firebaseConfig = {
 Object.keys(PHOTOS).forEach(function (slot) {
   if (!PHOTOS[slot]) return;
   var el = document.querySelector('[data-slot="' + slot + '"]');
-  if (el) el.style.background = 'url("' + PHOTOS[slot] + '") center / cover no-repeat';
+  if (!el) return;
+  var img = new Image();
+  img.alt = "";
+  img.decoding = "async";
+  if (slot !== "hero") img.loading = "lazy";
+  img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); };
+  img.src = PHOTOS[slot];
+  el.appendChild(img);
 });
 
 (function () {
