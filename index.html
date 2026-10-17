@@ -110,8 +110,9 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
     linear-gradient(180deg, #0A0A0A, #121110 60%, #0A0A0A);
 }
 .hero-photo { position: absolute; inset: 0; z-index: -2; }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .42; filter: grayscale(.55) contrast(1.05); }
-.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,10,10,.55), rgba(10,10,10,.35) 40%, rgba(10,10,10,.95)); }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: .85; filter: contrast(1.05) saturate(.9); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at center, rgba(10,10,10,.35) 0%, rgba(10,10,10,.7) 70%), linear-gradient(180deg, rgba(10,10,10,.45), rgba(10,10,10,.15) 40%, rgba(10,10,10,.92)); }
+.hero h1 { text-shadow: 0 2px 40px rgba(0,0,0,.45); }
 .hero .wrap { width: 100%; display: flex; flex-direction: column; align-items: center; }
 .hero .kicker::after { content: ""; width: 36px; height: 1px; background: var(--gold); }
 .hero h1 {
@@ -142,6 +143,17 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
 .head.center { margin: 0 auto; text-align: center; }
 .head.center .kicker::after { content: ""; width: 36px; height: 1px; background: var(--gold); }
 .head.center .lede { margin-left: auto; margin-right: auto; }
+
+/* services grid */
+#services.sec { padding: clamp(48px, 6vw, 80px) 0; }
+#services h2 { font-size: clamp(30px, 3.6vw, 44px); }
+.svc-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px clamp(24px, 4vw, 56px); margin-top: clamp(28px, 4vw, 44px); }
+.svc-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 14px; align-items: baseline; }
+.svc-list .si { grid-row: 1 / span 2; font: 300 italic 16px/1 var(--display); color: var(--gold); }
+.svc-list h3 { font-size: 21px; line-height: 1.2; }
+.svc-list p { font-size: 14px; line-height: 1.5; color: var(--mute); }
+@media (max-width: 899px) { .svc-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .svc-list { grid-template-columns: minmax(0, 1fr); gap: 20px; } }
 
 /* service rows */
 .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 110px); align-items: center; }
@@ -247,10 +259,20 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
   <section class="sec alt" id="services">
     <div class="wrap">
       <div class="head center">
-        <p class="kicker">Scope of work</p>
-        <h2>Three ways we work on <em>your home.</em></h2>
-        <p class="lede">From a full kitchen refresh to a leaking gutter, every job gets the same attention to straight lines, clean edges and a tidy site at the end of each day.</p>
+        <p class="kicker">Our services</p>
+        <h2>Everything your home needs, <em>done properly.</em></h2>
       </div>
+      <ul class="svc-list">
+        <li><span class="si">01</span><h3>Kitchen renovations</h3><p>Cabinets, counters, backsplash and finishing details.</p></li>
+        <li><span class="si">02</span><h3>Bathroom refurbishment</h3><p>Tile, vanities, fixtures and complete bathroom updates.</p></li>
+        <li><span class="si">03</span><h3>Drywall</h3><p>Hanging, taping, patching and smooth finishing.</p></li>
+        <li><span class="si">04</span><h3>Interior painting</h3><p>Walls, ceilings and trim with clean cut lines.</p></li>
+        <li><span class="si">05</span><h3>Siding</h3><p>Repair and replacement with tight, even lines.</p></li>
+        <li><span class="si">06</span><h3>Roofing</h3><p>Shingle repair and straightforward roof work.</p></li>
+        <li><span class="si">07</span><h3>Gutters</h3><p>Installation, repair and replacement.</p></li>
+        <li><span class="si">08</span><h3>Home repairs</h3><p>Damaged walls, trim, doors and worn finishes.</p></li>
+        <li><span class="si">09</span><h3>Fixtures &amp; mounting</h3><p>Lighting, hardware, shelving, TVs and punch lists.</p></li>
+      </ul>
     </div>
   </section>
 
@@ -392,12 +414,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
 /* Project photos (Unsplash, free to use). Swap any URL for your own project photo.
    If an image cannot load, the dark gold-lit panel behind it shows instead. */
 var UNSPLASH = "https://images.unsplash.com/photo-";
+var Q = "?fm=jpg&q=80&auto=format&fit=crop&w=";
+/* Each slot lists several photos; the first one that loads is used. */
 var PHOTOS = {
-  hero:     UNSPLASH + "1598928506311-c55ded91a20c?fm=jpg&q=80&w=2000&auto=format&fit=crop",
-  interior: UNSPLASH + "1507089947368-19c1da9775ae?fm=jpg&q=80&w=1200&auto=format&fit=crop",
-  exterior: UNSPLASH + "1777106322601-578dc9213ace?fm=jpg&q=80&w=1200&auto=format&fit=crop",
-  repairs:  UNSPLASH + "1606676539940-12768ce0e762?fm=jpg&q=80&w=1200&auto=format&fit=crop",
-  bathroom: UNSPLASH + "1771929662486-f793e08f0f16?fm=jpg&q=80&w=1200&auto=format&fit=crop"
+  hero:     ["1613490493576-7fde63acd811", "1600210492486-724fe5c67fb0", "1600585154340-be6161a56a0c"].map(function (id) { return UNSPLASH + id + Q + "2000"; }),
+  interior: ["1600607687939-ce8a6c25118c", "1556909114-f6e7ad7d3136", "1560448204-e02f11c3d0e2"].map(function (id) { return UNSPLASH + id + Q + "1200"; }),
+  exterior: ["1600585154340-be6161a56a0c", "1600566753190-17f0baa2a6c3", "1613490493576-7fde63acd811"].map(function (id) { return UNSPLASH + id + Q + "1200"; }),
+  repairs:  ["1581578731548-c64695cc6952", "1504148455328-c376907d081c", "1556909114-f6e7ad7d3136"].map(function (id) { return UNSPLASH + id + Q + "1200"; }),
+  bathroom: ["1620626011761-996317b8d101", "1584622650111-993a426fbf0a", "1552321554-5fefe8c9ef14"].map(function (id) { return UNSPLASH + id + Q + "1200"; })
 };
 
 var firebaseConfig = {
@@ -410,16 +434,20 @@ var firebaseConfig = {
 };
 
 Object.keys(PHOTOS).forEach(function (slot) {
-  if (!PHOTOS[slot]) return;
+  var list = PHOTOS[slot];
   var el = document.querySelector('[data-slot="' + slot + '"]');
-  if (!el) return;
-  var img = new Image();
-  img.alt = "";
-  img.decoding = "async";
-  if (slot !== "hero") img.loading = "lazy";
-  img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); };
-  img.src = PHOTOS[slot];
-  el.appendChild(img);
+  if (!list || !list.length || !el) return;
+  var i = 0;
+  function tryNext() {
+    if (i >= list.length) return;
+    var img = new Image();
+    img.alt = "";
+    img.referrerPolicy = "no-referrer";
+    img.onload = function () { el.appendChild(img); };
+    img.onerror = function () { i++; tryNext(); };
+    img.src = list[i];
+  }
+  tryNext();
 });
 
 (function () {
