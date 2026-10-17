@@ -4,261 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LXL Home Improvement</title>
+<meta name="description" content="LXL Home Improvement LLC. Interior renovations, exterior upgrades, bathroom refurbishment and home repairs, priced in writing before work begins.">
+<meta name="theme-color" content="#0A0A0A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400..600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* Layout concept: a drafting-table take on a premium contractor site. One long scroll;
-   service panels stack over each other on desktop; brass dimension lines and mono
-   spec labels carry the trade vocabulary. Colour bands alternate slate, plaster, walnut. */
 :root {
-  --slate: #111A22;
-  --ink-deep: #0B1117;
-  --plaster: #E9E6E0;
-  --stone: #D9D5CC;
-  --walnut: #2B221C;
-  --brass: #B8964F;
-  --brass-deep: #6F5420;
-  --text-l: #F1EEE8;
-  --mute-d: #AEB6BB;
-  --text-d: #1A222A;
-  --mute-l: #46515A;
-  --field: #F6F4F0;
-  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
-  --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --hdr: 66px;
+  --black: #0A0A0A;
+  --coal: #111111;
+  --graphite: #181715;
+  --ivory: #F2EDE3;
+  --mute: #A9A296;
+  --gold: #C9A24B;
+  --gold-hi: #E6C877;
+  --gold-lo: #8F6F2A;
+  --hair: rgba(201,162,75,.28);
+  --gold-grad: linear-gradient(120deg, #8F6F2A 0%, #E6C877 38%, #C9A24B 62%, #8F6F2A 100%);
+  --display: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --body: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hdr: 68px;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--ink-deep);
-  color: var(--text-l);
-  font: 400 17px/1.6 var(--body);
+  background: var(--black);
+  color: var(--ivory);
+  font: 300 17px/1.7 var(--body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 h1, h2, h3, p, ul, ol { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 a { color: inherit; text-decoration: none; }
-:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+img { max-width: 100%; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+section[id] { scroll-margin-top: var(--hdr); }
 
 .wrap {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding-left: max(clamp(16px, 4vw, 52px), env(safe-area-inset-left, 0px));
-  padding-right: max(clamp(16px, 4vw, 52px), env(safe-area-inset-right, 0px));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
 }
-.band { background: var(--bg); color: var(--fg); }
-.dark  { --bg: var(--slate);    --fg: var(--text-l); --mut: var(--mute-d); --acc: var(--brass);      --line: rgba(255,255,255,.16); }
-.deep  { --bg: var(--ink-deep); --fg: var(--text-l); --mut: var(--mute-d); --acc: var(--brass);      --line: rgba(255,255,255,.14); }
-.wood  { --bg: var(--walnut);   --fg: var(--text-l); --mut: #C2B8AE;       --acc: var(--brass);      --line: rgba(255,255,255,.18); }
-.light { --bg: var(--plaster);  --fg: var(--text-d); --mut: var(--mute-l); --acc: var(--brass-deep); --line: rgba(26,34,42,.22); }
-.stone { --bg: var(--stone);    --fg: var(--text-d); --mut: #3F4A52;       --acc: var(--brass-deep); --line: rgba(26,34,42,.24); }
+@media (min-width: 900px) { .wrap { padding-left: 48px; padding-right: 48px; } }
 
 /* type */
 .kicker {
-  font: 500 12px/1.4 var(--mono);
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--acc, var(--brass));
+  display: inline-flex; align-items: center; gap: 14px;
+  font: 400 12px/1.4 var(--body);
+  letter-spacing: .34em; text-transform: uppercase;
+  color: var(--gold);
 }
-h1, h2, h3 { font-family: var(--display); font-stretch: 116%; font-weight: 300; letter-spacing: -.025em; text-wrap: balance; }
-h1 { font-size: clamp(42px, 7.6vw, 108px); line-height: .98; letter-spacing: -.035em; }
-h2 { font-size: clamp(34px, 4.6vw, 64px); line-height: 1.03; }
-h1 em, h2 em { font-style: italic; font-weight: 300; color: var(--acc, var(--brass)); }
-.lede { font-size: clamp(17px, 1.5vw, 20px); max-width: 54ch; color: var(--mut); }
+.kicker::before { content: ""; width: 36px; height: 1px; background: var(--gold); flex: none; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; }
+h2 { font-size: clamp(36px, 5vw, 62px); line-height: 1.08; letter-spacing: -.01em; margin-top: 20px; }
+h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
+.lede { font-size: 18px; color: var(--mute); max-width: 52ch; margin-top: 22px; }
+.rule { width: 64px; height: 1px; background: var(--gold-grad); margin-top: 28px; }
 
 /* buttons */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 15px 26px;
-  font: 500 13px/1 var(--mono);
-  letter-spacing: .14em; text-transform: uppercase;
-  border: 1px solid var(--brass);
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background .25s, color .25s, transform .25s;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 18px 34px; min-height: 52px;
+  font: 500 12px/1 var(--body);
+  letter-spacing: .28em; text-transform: uppercase;
+  border: 1px solid var(--gold);
+  border-radius: 0; cursor: pointer;
+  transition: background .3s, color .3s, border-color .3s;
 }
-.btn-solid { background: var(--brass); color: var(--ink-deep); }
-.btn-solid:hover { background: #CDAA62; }
-.btn-ghost { background: transparent; color: var(--text-l); border-color: rgba(255,255,255,.4); }
-.btn-ghost:hover { border-color: var(--brass); color: var(--brass); }
-.btn-dark { background: var(--ink-deep); color: var(--text-l); border-color: var(--ink-deep); }
-.btn-dark:hover { background: #1C2933; }
+.btn-gold { background: var(--gold-grad); color: var(--black); border-color: var(--gold); }
+.btn-gold:hover { background: var(--gold-hi); }
+.btn-line { background: transparent; color: var(--ivory); }
+.btn-line:hover { background: var(--gold); color: var(--black); }
+.btn[disabled] { opacity: .6; cursor: default; }
 
 /* header */
 .hdr {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
-  background: rgba(11,17,23,.9);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,.09);
-  color: var(--text-l);
+  position: sticky; top: 0; z-index: 50;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: rgba(10,10,10,.96);
+  border-bottom: 1px solid var(--hair);
 }
 .hdr .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--hdr); }
-.logo { display: flex; align-items: baseline; gap: 12px; }
-.logo b { font: 700 26px/1 var(--display); font-stretch: 125%; letter-spacing: .06em; }
-.logo span { font: 500 10.5px/1.2 var(--mono); letter-spacing: .22em; text-transform: uppercase; color: var(--brass); }
-.nav { display: flex; align-items: center; gap: clamp(18px, 2.6vw, 38px); }
-.nav a:not(.btn) { font: 500 12px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--mute-d); transition: color .2s; }
-.nav a:not(.btn):hover { color: var(--text-l); }
-.nav .btn { padding: 12px 18px; font-size: 12px; }
-@media (max-width: 900px) { .nav a:not(.btn) { display: none; } .logo span { display: none; } }
-
-/* photo slots */
-.photo { position: relative; overflow: hidden; background-size: cover; background-position: center; }
-.photo img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; }
-.tex-hero {
-  background:
-    radial-gradient(900px 520px at 78% 16%, rgba(184,150,79,.24), transparent 62%),
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 100% 96px,
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px) 0 0 / 96px 100%,
-    linear-gradient(160deg, #1C2A36, #0E161D 72%);
-}
-.tex-interior {
-  background:
-    linear-gradient(rgba(255,255,255,.08) 2px, transparent 2px) 0 0 / 150px 150px,
-    linear-gradient(90deg, rgba(255,255,255,.08) 2px, transparent 2px) 0 0 / 150px 150px,
-    radial-gradient(520px 380px at 28% 18%, rgba(255,255,255,.12), transparent 70%),
-    linear-gradient(135deg, #34475A, #182430);
-}
-.tex-exterior {
-  background:
-    repeating-linear-gradient(180deg, rgba(0,0,0,.16) 0 3px, rgba(255,255,255,.2) 3px 5px, transparent 5px 46px),
-    radial-gradient(520px 380px at 70% 12%, rgba(255,255,255,.2), transparent 70%),
-    linear-gradient(180deg, #93A2A8, #66777F);
-}
-.tex-repairs {
-  background:
-    repeating-linear-gradient(90deg, rgba(0,0,0,.3) 0 2px, transparent 2px 74px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 9px),
-    radial-gradient(520px 380px at 30% 15%, rgba(255,255,255,.1), transparent 70%),
-    linear-gradient(180deg, #54402F, #34271E);
-}
-.tex-bath {
-  background:
-    linear-gradient(rgba(0,0,0,.09) 2px, transparent 2px) 0 0 / 260px 260px,
-    linear-gradient(90deg, rgba(0,0,0,.09) 2px, transparent 2px) 0 0 / 260px 260px,
-    linear-gradient(118deg, transparent 30%, rgba(70,78,84,.2) 30.3%, transparent 31.3%, transparent 58%, rgba(70,78,84,.14) 58.3%, transparent 59.2%, transparent 80%, rgba(70,78,84,.12) 80.2%, transparent 81%),
-    linear-gradient(145deg, #F3F2EF, #D5D4D0);
-}
-.frame { position: relative; }
-.frame::before, .frame::after {
-  content: ""; position: absolute; width: 34px; height: 34px; pointer-events: none; z-index: 2;
-  border: 0 solid var(--brass);
-}
-.frame::before { top: -9px; left: -9px; border-top-width: 2px; border-left-width: 2px; }
-.frame::after { bottom: -9px; right: -9px; border-bottom-width: 2px; border-right-width: 2px; }
+.logo { display: flex; align-items: center; gap: 14px; }
+.logo b { font: 500 30px/1 var(--display); letter-spacing: .14em; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.logo span { font: 400 10px/1.3 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--mute); padding-left: 14px; border-left: 1px solid var(--hair); }
+.nav { display: flex; align-items: center; gap: clamp(20px, 3vw, 44px); }
+.nav a:not(.btn) { font: 400 11.5px/1 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--mute); transition: color .2s; }
+.nav a:not(.btn):hover { color: var(--gold-hi); }
+.nav .btn { padding: 14px 22px; min-height: 0; font-size: 11px; }
+@media (max-width: 860px) { .nav a:not(.btn) { display: none; } }
+@media (max-width: 480px) { .logo span { display: none; } .nav .btn { padding: 13px 16px; letter-spacing: .2em; } }
 
 /* hero */
 .hero {
   position: relative; isolation: isolate; overflow: hidden;
-  display: flex; align-items: flex-end;
-  min-height: clamp(600px, 88svh, 880px);
-  color: var(--text-l);
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 720px;
+  min-height: min(92vh, 900px);
+  padding: 96px 0 80px;
+  background:
+    radial-gradient(700px 420px at 50% 0%, rgba(201,162,75,.2), transparent 70%),
+    linear-gradient(180deg, #0A0A0A, #121110 60%, #0A0A0A);
 }
-.hero > .photo { position: absolute; inset: 0; z-index: -2; }
-.hero::after {
-  content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(180deg, rgba(11,17,23,.5) 0%, rgba(11,17,23,.28) 36%, rgba(11,17,23,.9) 100%);
+.hero-photo { position: absolute; inset: 0; z-index: -2; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .42; filter: grayscale(.55) contrast(1.05); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(10,10,10,.55), rgba(10,10,10,.35) 40%, rgba(10,10,10,.95)); }
+.hero .wrap { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.hero .kicker::after { content: ""; width: 36px; height: 1px; background: var(--gold); }
+.hero h1 {
+  margin-top: 30px;
+  font-size: clamp(40px, 8.4vw, 112px);
+  line-height: 1.02; letter-spacing: .02em; font-weight: 400;
+  text-transform: uppercase;
+  max-width: 14ch;
+  background: linear-gradient(180deg, #F6E3A8 0%, #D4AE5A 52%, #9C7A32 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.hero .wrap { width: 100%; padding-block: clamp(72px, 12vh, 140px) clamp(32px, 5vh, 56px); }
-.hero h1 { max-width: 15ch; margin-top: 22px; }
-.hero .lede { margin-top: 28px; color: #D3D8DA; }
-.hero .cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 38px; }
-.dim {
-  display: flex; align-items: center; gap: 16px; margin-top: clamp(40px, 7vh, 72px);
-  font: 500 11.5px/1.3 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--brass);
+.hero .lede { margin: 30px auto 0; color: #CFC8BA; text-align: center; }
+.hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 44px; }
+.hero .tags { margin-top: 64px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font: 400 11px/1 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--gold); }
+.hero .tags span + span::before { content: "\25C6"; margin-right: 28px; font-size: 7px; vertical-align: middle; color: var(--gold-lo); }
+@media (max-width: 560px) {
+  .hero { padding: 72px 0 56px; min-height: 0; }
+  .hero .tags { gap: 12px 18px; letter-spacing: .22em; }
+  .hero .tags span + span::before { margin-right: 18px; }
+  .hero .cta .btn { width: 100%; }
 }
-.dim::before, .dim::after { content: ""; width: 1px; height: 16px; background: currentColor; flex: none; }
-.dim i { flex: 1; height: 1px; background: currentColor; opacity: .45; }
-.dim span { text-align: center; }
-@media (max-width: 600px) { .dim { font-size: 10.5px; letter-spacing: .12em; gap: 10px; } }
 
-@keyframes rise { from { transform: translateY(20px); } to { transform: none; } }
-.rise { animation: rise .95s cubic-bezier(.2,.7,.2,1) both; }
-.rise.d1 { animation-delay: .12s; } .rise.d2 { animation-delay: .24s; } .rise.d3 { animation-delay: .36s; }
-@media (prefers-reduced-motion: reduce) { .rise { animation: none; } html { scroll-behavior: auto; } }
+/* sections */
+.sec { padding: clamp(72px, 10vw, 140px) 0; }
+.sec.alt { background: var(--coal); }
+.sec + .sec { border-top: 1px solid var(--hair); }
+.head { max-width: 760px; }
+.head.center { margin: 0 auto; text-align: center; }
+.head.center .kicker::after { content: ""; width: 36px; height: 1px; background: var(--gold); }
+.head.center .lede { margin-left: auto; margin-right: auto; }
 
-/* services intro */
-.intro .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(24px, 5vw, 88px); align-items: end; padding-block: clamp(64px, 9vw, 128px); }
-.intro h2 { margin-top: 18px; }
-@media (max-width: 800px) { .intro .wrap { grid-template-columns: minmax(0, 1fr); } }
+/* service rows */
+.row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(36px, 6vw, 110px); align-items: center; }
+.row + .row { margin-top: clamp(72px, 9vw, 128px); }
+.row.rev .media { order: -1; }
+.num { font: 300 italic 22px/1 var(--display); color: var(--gold); letter-spacing: .08em; }
+.row h3 { font-size: clamp(34px, 4.2vw, 54px); line-height: 1.08; margin-top: 16px; }
+.row h3 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
+.scope { margin-top: 32px; border-top: 1px solid var(--hair); }
+.scope li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 4px 24px; padding: 17px 0; border-bottom: 1px solid var(--hair); }
+.scope b { font: 500 19px/1.3 var(--display); letter-spacing: .02em; color: var(--ivory); }
+.scope span { font-size: 15px; color: var(--mute); }
 
-/* service panels */
-.svc { position: relative; }
-.svc-grid {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 96px); align-items: center;
-  min-height: min(720px, calc(100svh - var(--hdr)));
-  padding-block: clamp(44px, 6vw, 96px);
-}
-.svc.rev .photo { order: -1; }
-.svc .photo { width: 100%; aspect-ratio: 4 / 5; max-height: 580px; }
-.svc h2 { margin-top: 16px; }
-.svc .lede { margin-top: 22px; }
-.scope { margin-top: 30px; border-top: 1px solid var(--line); }
-.scope li {
-  display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 4px 24px;
-  padding: 15px 0; border-bottom: 1px solid var(--line);
-}
-.scope b { font: 500 17px/1.3 var(--display); font-stretch: 108%; letter-spacing: -.005em; }
-.scope span { font-size: 15px; color: var(--mut); }
-@media (min-width: 900px) {
-  .svc { position: sticky; top: calc(var(--hdr) + env(safe-area-inset-top, 0px)); }
-}
+/* photo with gold frame */
+.media { position: relative; padding: 14px; }
+.media::before { content: ""; position: absolute; inset: 0; border: 1px solid var(--hair); pointer-events: none; }
+.media::after { content: ""; position: absolute; left: 0; top: 0; width: 56px; height: 56px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); pointer-events: none; }
+.photo { position: relative; overflow: hidden; aspect-ratio: 4 / 5; background-color: #1A1815; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(.25) contrast(1.04) brightness(.92); }
+.tex-a { background: radial-gradient(420px 320px at 30% 15%, rgba(201,162,75,.22), transparent 70%), linear-gradient(135deg, #24211B, #0E0D0B); }
+.tex-b { background: radial-gradient(420px 320px at 70% 15%, rgba(201,162,75,.2), transparent 70%), linear-gradient(160deg, #26231D, #0E0D0B); }
+.tex-c { background: radial-gradient(420px 320px at 30% 15%, rgba(201,162,75,.2), transparent 70%), linear-gradient(135deg, #2A2018, #0E0D0B); }
+.tex-d { background: radial-gradient(420px 320px at 50% 15%, rgba(201,162,75,.22), transparent 70%), linear-gradient(135deg, #23211D, #0E0D0B); }
+
 @media (max-width: 899px) {
-  .svc-grid { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-  .svc .photo, .svc.rev .photo { order: -1; aspect-ratio: 4 / 3; max-height: none; }
+  .row { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .row.rev .media, .row .media { order: -1; }
+  .photo { aspect-ratio: 4 / 3; }
 }
 @media (max-width: 520px) { .scope li { grid-template-columns: minmax(0, 1fr); } }
 
-/* bathrooms */
-.bath .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(28px, 5vw, 96px); align-items: center; padding-block: clamp(64px, 9vw, 132px); }
-.bath .photo { aspect-ratio: 5 / 6; width: 100%; max-height: 680px; }
-.bath h2 { margin-top: 16px; }
-.bath .lede { margin-top: 22px; }
-.bath .btn { margin-top: 34px; }
-@media (max-width: 899px) { .bath .wrap { grid-template-columns: minmax(0, 1fr); } .bath .photo { aspect-ratio: 4 / 3; } }
-
 /* process */
-.process .wrap { padding-block: clamp(64px, 9vw, 128px); }
-.process h2 { margin-top: 18px; max-width: 18ch; }
-.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: clamp(24px, 3vw, 44px); margin-top: clamp(40px, 6vw, 72px); }
-.steps li { border-top: 1px solid var(--brass); padding-top: 22px; }
-.steps .n { font: 500 12px/1 var(--mono); letter-spacing: .2em; color: var(--brass); }
-.steps h3 { font-size: 26px; font-weight: 400; font-stretch: 110%; margin-top: 18px; letter-spacing: -.015em; }
-.steps p { margin-top: 12px; font-size: 15.5px; color: var(--mut); }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0; margin-top: clamp(48px, 6vw, 80px); border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
+.steps li { padding: 40px 32px 44px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
+.steps .n { font: 300 italic 44px/1 var(--display); background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.steps h3 { font-size: 27px; line-height: 1.2; margin-top: 22px; }
+.steps p { margin-top: 12px; font-size: 15.5px; color: var(--mute); }
 
 /* quote */
-.quote .wrap { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 110px); padding-block: clamp(64px, 9vw, 128px); align-items: start; }
-.quote h2 { margin-top: 18px; }
-.quote .lede { margin-top: 22px; }
-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.field { display: grid; gap: 8px; min-width: 0; }
+.quote-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 110px); align-items: start; }
+form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: clamp(24px, 4vw, 48px); background: var(--graphite); border: 1px solid var(--hair); }
+.field { display: grid; gap: 10px; min-width: 0; }
 .field.full { grid-column: 1 / -1; }
-label { font: 500 11.5px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--mut); }
+label { font: 400 11px/1.2 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--gold); }
 input, select, textarea {
   width: 100%; min-width: 0;
-  padding: 14px; font: 400 16px/1.4 var(--body); color: var(--text-d);
-  background: var(--field); border: 1px solid rgba(26,34,42,.34); border-radius: 2px;
+  padding: 14px 2px; font: 300 16px/1.4 var(--body); color: var(--ivory);
+  background: transparent; border: 0; border-bottom: 1px solid rgba(201,162,75,.4); border-radius: 0;
+  -webkit-appearance: none; appearance: none;
 }
-textarea { min-height: 140px; resize: vertical; }
-input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--brass-deep); outline-offset: 1px; }
+select { background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%); background-position: calc(100% - 14px) 52%, calc(100% - 8px) 52%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 30px; }
+select option { background: #181715; color: var(--ivory); }
+textarea { min-height: 130px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: var(--gold-hi); }
 .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.form-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
-#formStatus { font-size: 15px; color: var(--mut); min-height: 1.5em; flex: 1 1 240px; }
-#formStatus.ok { color: #2F5D3A; font-weight: 500; }
-#formStatus.err { color: #8A2C25; font-weight: 500; }
-@media (max-width: 899px) { .quote .wrap { grid-template-columns: minmax(0, 1fr); } }
+.form-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 6px; }
+#formStatus { font-size: 15px; color: var(--mute); min-height: 1.5em; flex: 1 1 240px; }
+#formStatus.ok { color: var(--gold-hi); }
+#formStatus.err { color: #E58F86; }
+@media (max-width: 899px) { .quote-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { form { grid-template-columns: minmax(0, 1fr); } .form-foot .btn { width: 100%; } }
 
 /* footer */
-.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 28px 48px; padding-block: 56px 44px; }
-.foot .logo b { font-size: 34px; }
-.foot p, .foot li { font-size: 14px; color: var(--mute-d); }
-.foot ul { display: grid; gap: 6px; }
-.foot .small { width: 100%; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.12); font: 400 12px/1.5 var(--mono); letter-spacing: .08em; color: #8A949A; }
+.foot { background: var(--black); border-top: 1px solid var(--hair); }
+.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px 56px; padding-top: 64px; padding-bottom: 44px; }
+.foot .logo b { font-size: 40px; }
+.foot p, .foot li { font-size: 14px; color: var(--mute); }
+.foot ul { display: grid; gap: 8px; }
+.foot .small { width: 100%; padding-top: 26px; border-top: 1px solid var(--hair); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7C766B; }
+
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 </style>
 </head>
 <body>
@@ -270,42 +224,42 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
       <a href="#services">Services</a>
       <a href="#bathrooms">Bathrooms</a>
       <a href="#process">Process</a>
-      <a class="btn btn-solid" href="#quote">Get an estimate</a>
+      <a class="btn btn-gold" href="#quote">Estimate</a>
     </nav>
   </div>
 </header>
 
 <main id="top">
   <section class="hero">
-    <div class="photo tex-hero" data-slot="hero" role="img" aria-label="Finished interior"></div>
+    <div class="hero-photo" data-slot="hero" role="img" aria-label="Finished luxury interior"></div>
     <div class="wrap">
-      <p class="kicker rise">LXL Home Improvement LLC</p>
-      <h1 class="rise d1">Homes finished to a <em>higher</em> standard.</h1>
-      <p class="lede rise d2">Interior renovations, exterior upgrades and everyday repairs, handled with the care of a custom build and priced in writing before work begins.</p>
-      <div class="cta rise d3">
-        <a class="btn btn-solid" href="#quote">Request an estimate</a>
-        <a class="btn btn-ghost" href="#services">See our services</a>
+      <p class="kicker">LXL Home Improvement LLC</p>
+      <h1>LXL versed like the universe.</h1>
+      <p class="lede">Interior renovations, exterior upgrades and everyday repairs, handled with the care of a custom build and priced in writing before work begins.</p>
+      <div class="cta">
+        <a class="btn btn-gold" href="#quote">Request an estimate</a>
+        <a class="btn btn-line" href="#services">Our services</a>
       </div>
-      <div class="dim" aria-hidden="true"><i></i><span>Interior &middot; Exterior &middot; Repairs</span><i></i></div>
+      <p class="tags" aria-hidden="true"><span>Interior</span><span>Exterior</span><span>Repairs</span></p>
     </div>
   </section>
 
-  <section class="band deep intro" id="services">
+  <section class="sec alt" id="services">
     <div class="wrap">
-      <div>
+      <div class="head center">
         <p class="kicker">Scope of work</p>
         <h2>Three ways we work on <em>your home.</em></h2>
+        <p class="lede">From a full kitchen refresh to a leaking gutter, every job gets the same attention to straight lines, clean edges and a tidy site at the end of each day.</p>
       </div>
-      <p class="lede">From a full kitchen refresh to a leaking gutter, every job gets the same attention to straight lines, clean edges and a tidy site at the end of each day.</p>
     </div>
   </section>
 
-  <div class="stack">
-    <section class="band dark svc">
-      <div class="wrap svc-grid">
+  <section class="sec">
+    <div class="wrap">
+      <div class="row">
         <div>
-          <p class="kicker">Inside the home</p>
-          <h2>Interior <em>renovations</em></h2>
+          <span class="num">I</span>
+          <h3>Interior <em>renovations</em></h3>
           <p class="lede">Rooms that look considered and hold up to daily use, from the framing behind the wall to the last coat of paint.</p>
           <ul class="scope">
             <li><b>Kitchens</b><span>Cabinets, counters, backsplash and finishing details</span></li>
@@ -314,15 +268,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
             <li><b>Painting</b><span>Walls, ceilings and trim with clean cut lines</span></li>
           </ul>
         </div>
-        <div class="frame"><div class="photo tex-interior" data-slot="interior" role="img" aria-label="Renovated interior"></div></div>
+        <div class="media"><div class="photo tex-a" data-slot="interior" role="img" aria-label="Renovated interior"></div></div>
       </div>
-    </section>
 
-    <section class="band light svc rev">
-      <div class="wrap svc-grid">
+      <div class="row rev">
         <div>
-          <p class="kicker">Outside the home</p>
-          <h2>Exterior <em>upgrades</em></h2>
+          <span class="num">II</span>
+          <h3>Exterior <em>upgrades</em></h3>
           <p class="lede">Curb appeal that also protects the house: the layers that keep weather out and make the street notice.</p>
           <ul class="scope">
             <li><b>Siding</b><span>Repair and replacement with tight, even lines</span></li>
@@ -330,15 +282,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
             <li><b>Gutters</b><span>Installation, repair and replacement</span></li>
           </ul>
         </div>
-        <div class="frame"><div class="photo tex-exterior" data-slot="exterior" role="img" aria-label="Upgraded home exterior"></div></div>
+        <div class="media"><div class="photo tex-b" data-slot="exterior" role="img" aria-label="Upgraded home exterior"></div></div>
       </div>
-    </section>
 
-    <section class="band wood svc">
-      <div class="wrap svc-grid">
+      <div class="row">
         <div>
-          <p class="kicker">The punch list</p>
-          <h2>Repairs &amp; <em>handyman</em> work</h2>
+          <span class="num">III</span>
+          <h3>Repairs &amp; <em>handyman</em> work</h3>
           <p class="lede">The small jobs that pile up and the repairs that cannot wait, done properly and in one visit wherever possible.</p>
           <ul class="scope">
             <li><b>Home repairs</b><span>Damaged walls, trim, doors and worn finishes</span></li>
@@ -346,34 +296,38 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
             <li><b>Punch lists</b><span>A full list of odd jobs cleared in one scheduled block</span></li>
           </ul>
         </div>
-        <div class="frame"><div class="photo tex-repairs" data-slot="repairs" role="img" aria-label="Repair and handyman work"></div></div>
-      </div>
-    </section>
-  </div>
-
-  <section class="band stone bath" id="bathrooms">
-    <div class="wrap">
-      <div class="frame"><div class="photo tex-bath" data-slot="bathroom" role="img" aria-label="Refurbished bathroom"></div></div>
-      <div>
-        <p class="kicker">Bathrooms</p>
-        <h2>Repair, restore or <em>refurbish.</em></h2>
-        <p class="lede">A tired bathroom rarely needs everything replaced. We fix what has failed and refresh what has dated, or take the whole room back to bare walls when that is the better answer.</p>
-        <ul class="scope">
-          <li><b>Tile repair</b><span>Cracked tile, failed grout and fresh caulking</span></li>
-          <li><b>Fixtures</b><span>Vanities, mirrors, lighting and hardware</span></li>
-          <li><b>Wall repair</b><span>Drywall patching where moisture has done damage</span></li>
-          <li><b>Repainting</b><span>Moisture-resistant finishes for walls and ceilings</span></li>
-          <li><b>Refurbishment</b><span>Complete bathroom updates from start to finish</span></li>
-        </ul>
-        <a class="btn btn-dark" href="#quote">Ask about your bathroom</a>
+        <div class="media"><div class="photo tex-c" data-slot="repairs" role="img" aria-label="Repair and handyman work"></div></div>
       </div>
     </div>
   </section>
 
-  <section class="band dark process" id="process">
+  <section class="sec alt" id="bathrooms">
     <div class="wrap">
-      <p class="kicker">How a project runs</p>
-      <h2>Clear steps from <em>first call</em> to final walkthrough.</h2>
+      <div class="row rev">
+        <div>
+          <p class="kicker">Bathrooms</p>
+          <h2>Repair, restore or <em>refurbish.</em></h2>
+          <p class="lede">A tired bathroom rarely needs everything replaced. We fix what has failed and refresh what has dated, or take the whole room back to bare walls when that is the better answer.</p>
+          <ul class="scope">
+            <li><b>Tile repair</b><span>Cracked tile, failed grout and fresh caulking</span></li>
+            <li><b>Fixtures</b><span>Vanities, mirrors, lighting and hardware</span></li>
+            <li><b>Wall repair</b><span>Drywall patching where moisture has done damage</span></li>
+            <li><b>Repainting</b><span>Moisture-resistant finishes for walls and ceilings</span></li>
+            <li><b>Refurbishment</b><span>Complete bathroom updates from start to finish</span></li>
+          </ul>
+          <p style="margin-top:36px"><a class="btn btn-line" href="#quote">Ask about your bathroom</a></p>
+        </div>
+        <div class="media"><div class="photo tex-d" data-slot="bathroom" role="img" aria-label="Refurbished bathroom"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="process">
+    <div class="wrap">
+      <div class="head center">
+        <p class="kicker">How a project runs</p>
+        <h2>Clear steps from <em>first call</em> to final walkthrough.</h2>
+      </div>
       <ol class="steps">
         <li><span class="n">01</span><h3>Walkthrough</h3><p>We visit, measure and listen to what you want changed, repaired or replaced.</p></li>
         <li><span class="n">02</span><h3>Written scope and price</h3><p>You receive the full scope of work and price in writing before anything starts.</p></li>
@@ -383,12 +337,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
     </div>
   </section>
 
-  <section class="band light quote" id="quote">
-    <div class="wrap">
+  <section class="sec alt" id="quote">
+    <div class="wrap quote-grid">
       <div>
         <p class="kicker">Start a project</p>
         <h2>Request an <em>estimate.</em></h2>
         <p class="lede">Describe the job in a few lines. Photos help, and we can ask for them when we reply.</p>
+        <div class="rule"></div>
       </div>
       <form id="quoteForm" novalidate>
         <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
@@ -409,7 +364,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
         <div class="field full"><label for="f-details">About the job</label><textarea id="f-details" name="details" required></textarea></div>
         <div class="trap" aria-hidden="true"><label for="f-company">Company</label><input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off"></div>
         <div class="form-foot">
-          <button class="btn btn-dark" id="f-submit" type="submit">Send request</button>
+          <button class="btn btn-gold" id="f-submit" type="submit">Send request</button>
           <p id="formStatus" role="status" aria-live="polite"></p>
         </div>
       </form>
@@ -417,7 +372,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
   </section>
 </main>
 
-<footer class="band deep foot">
+<footer class="foot">
   <div class="wrap">
     <div>
       <div class="logo"><b>LXL</b><span>Home Improvement</span></div>
@@ -435,14 +390,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 
 <script>
 /* Project photos (Unsplash, free to use). Swap any URL for your own project photo.
-   If an image cannot load, the textured panel behind it shows instead. */
+   If an image cannot load, the dark gold-lit panel behind it shows instead. */
 var UNSPLASH = "https://images.unsplash.com/photo-";
 var PHOTOS = {
-  hero:     UNSPLASH + "1598928506311-c55ded91a20c?fm=jpg&q=80&w=2200&auto=format&fit=crop",
-  interior: UNSPLASH + "1507089947368-19c1da9775ae?fm=jpg&q=80&w=1400&auto=format&fit=crop",
-  exterior: UNSPLASH + "1777106322601-578dc9213ace?fm=jpg&q=80&w=1400&auto=format&fit=crop",
-  repairs:  UNSPLASH + "1606676539940-12768ce0e762?fm=jpg&q=80&w=1400&auto=format&fit=crop",
-  bathroom: UNSPLASH + "1771929662486-f793e08f0f16?fm=jpg&q=80&w=1400&auto=format&fit=crop"
+  hero:     UNSPLASH + "1598928506311-c55ded91a20c?fm=jpg&q=80&w=2000&auto=format&fit=crop",
+  interior: UNSPLASH + "1507089947368-19c1da9775ae?fm=jpg&q=80&w=1200&auto=format&fit=crop",
+  exterior: UNSPLASH + "1777106322601-578dc9213ace?fm=jpg&q=80&w=1200&auto=format&fit=crop",
+  repairs:  UNSPLASH + "1606676539940-12768ce0e762?fm=jpg&q=80&w=1200&auto=format&fit=crop",
+  bathroom: UNSPLASH + "1771929662486-f793e08f0f16?fm=jpg&q=80&w=1200&auto=format&fit=crop"
 };
 
 var firebaseConfig = {
