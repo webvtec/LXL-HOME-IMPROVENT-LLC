@@ -252,6 +252,7 @@ const firebaseConfig = {
   messagingSenderId: "187111894816",
   appId: "1:187111894816:web:52398864d55c4bf48e7145"
 };
+const OWNER_UID = "VdQh2hDkOQP5ErDDZk2b7K8o1fJ2"; /* business owner: always an admin, record is created on first sign-in */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -788,6 +789,9 @@ onAuthStateChanged(auth, async user => {
   if(!user){ show("login"); return; }
   let snap;
   S.myId=user.uid; try{ snap = await getDoc(doc(db,"staff",S.myId)); }catch(err){ snap=null; }
+  if((!snap || !snap.exists()) && user.uid===OWNER_UID){
+    try{ await setDoc(doc(db,"staff",user.uid),{name:user.displayName||"Owner",email:user.email||"",role:"admin",active:true,createdAt:Timestamp.now()}); snap=await getDoc(doc(db,"staff",user.uid)); }catch(err){ console.error(err); }
+  }
   if(!snap || !snap.exists() || snap.data().active===false){ $("#d-uid").textContent=user.uid; $("#d-email").textContent=user.email||""; show("denied"); return; }
   S.staff=snap.data(); S.isAdmin=S.staff.role==="admin";
   $("#me-name").textContent=S.staff.name||user.email; $("#me-role").textContent=S.isAdmin?"Admin":"Receptionist";
