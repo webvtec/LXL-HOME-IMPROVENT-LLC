@@ -257,6 +257,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
 .foot .small { width: 100%; padding-top: 26px; border-top: 1px solid var(--hair); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7C766B; }
 
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+.authmsg{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;max-width:calc(100% - 32px);padding:14px 22px;background:#181715;border:1px solid var(--gold);color:var(--ivory);font-size:15px;text-align:center}
+.authmsg.err{border-color:#E58F86;color:#E58F86}
+.authmsg[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -267,7 +271,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
     <nav class="nav" aria-label="Main">
       <a href="#services">Services</a>
       <a href="#process">Process</a>
-      <a href="admin.html">Admin</a>
+      <a href="#" data-signin>Admin</a>
       <a class="btn btn-gold" href="#quote">Estimate</a>
     </nav>
   </div>
@@ -452,7 +456,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
       <li>Bathroom repair and refurbishment</li>
       <li>Home repairs and handyman tasks</li>
     </ul>
-    <div><a class="btn btn-line" href="admin.html">Admin login</a></div>
+    <div><a class="btn btn-line" href="#" data-signin>Admin login</a></div>
     <p class="small">&copy; 2026 LXL Home Improvement LLC. All rights reserved.</p>
   </div>
 </footer>
@@ -556,6 +560,68 @@ Object.keys(PHOTOS).forEach(function (slot) {
     });
   });
 })();
+</script>
+
+<div class="authmsg" id="authMsg" role="status" aria-live="polite" hidden></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const OWNER_UID = "VdQh2hDkOQP5ErDDZk2b7K8o1fJ2";
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
+const msgEl = document.getElementById("authMsg");
+let busy = false;
+
+function msg(text, bad) {
+  if (!text) { msgEl.hidden = true; return; }
+  msgEl.textContent = text; msgEl.className = "authmsg" + (bad ? " err" : ""); msgEl.hidden = false;
+  clearTimeout(msg.t); msg.t = setTimeout(function () { msgEl.hidden = true; }, 7000);
+}
+
+/* Only the owner or an active staff member may continue. Anyone else is signed out immediately. */
+async function check(user) {
+  try {
+    if (user.uid === OWNER_UID) return true;
+    var email = (user.email || "").toLowerCase();
+    if (!email || user.emailVerified === false) return false;
+    var snap = await getDoc(doc(db, "staff", email));
+    return snap.exists() && snap.data().active !== false;
+  } catch (e) { return false; }
+}
+async function finish(user) {
+  if (await check(user)) { location.href = "admin.html"; return; }
+  await signOut(auth).catch(function () {});
+  msg("That Google account does not have access.", true);
+  busy = false;
+}
+
+async function start(ev) {
+  ev.preventDefault();
+  if (busy) return; busy = true; msg("");
+  try {
+    var cred = await signInWithPopup(auth, provider);
+    await finish(cred.user);
+  } catch (err) {
+    if (err.code === "auth/popup-blocked") { try { await signInWithRedirect(auth, provider); return; } catch (x) {} }
+    if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
+      msg(err.code === "auth/unauthorized-domain" ? "This website address is not authorised in Firebase." : "Could not sign in with Google. Please try again.", true);
+    }
+    busy = false;
+  }
+}
+document.querySelectorAll("[data-signin]").forEach(function (a) { a.addEventListener("click", start); });
+
+getRedirectResult(auth).then(function (r) { if (r && r.user) { busy = true; return finish(r.user); } }).catch(function () {});
+if (new URLSearchParams(location.search).get("denied")) {
+  msg("That Google account does not have access.", true);
+  history.replaceState(null, "", location.pathname);
+}
 </script>
 
 </body>

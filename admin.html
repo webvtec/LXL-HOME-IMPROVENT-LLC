@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<noscript><meta http-equiv="refresh" content="0;url=index.html"></noscript>
+<script>setTimeout(function(){ if(!window.__lxlOk) location.replace("index.html"); }, 15000);</script>
 <meta name="theme-color" content="#0B0B0A">
 <title>LXL Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -169,32 +171,18 @@ input[type=date]{color-scheme:dark}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:140;background:var(--card2);border:1px solid var(--gold);border-radius:12px;padding:13px 20px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100% - 32px)}
 .toast.show{opacity:1;transform:translateX(-50%)}.toast.bad{border-color:var(--red);color:var(--red)}
 .note{padding:14px 18px;border:1px solid var(--line);background:rgba(201,162,75,.06);border-radius:12px;font-size:14px;color:var(--mute);margin-bottom:16px}
+
+/* access guard: covers everything until access is verified */
+#guard{position:fixed;inset:0;z-index:2147483647;background:var(--bg);display:grid;place-items:center;text-align:center;padding:24px}
+#guard p{margin-top:22px;color:var(--mute);font-size:14px;letter-spacing:.04em}
+.spin{width:30px;height:30px;margin:26px auto 0;border:2px solid var(--line2);border-top-color:var(--gold);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<div id="login" class="center" hidden>
-  <div class="card login">
-    <div class="brand"><b>LXL</b><small>Admin</small></div>
-    <h1>Welcome back</h1>
-    <p class="mute" style="margin-bottom:26px">Sign in with your Google account.</p>
-    <button class="btn" id="g-btn" type="button" style="width:100%;background:#fff;color:#1f1f1f;border-color:#fff;min-height:46px">
-      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      Continue with Google
-    </button>
-    <p class="err" id="l-err" role="alert"></p>
-  </div>
-</div>
-
-<div id="denied" class="center" hidden>
-  <div class="card login">
-    <div class="brand"><b>LXL</b><small>Admin</small></div>
-    <h1>No access yet</h1>
-    <p class="mute" style="margin-bottom:8px">This Google account has not been given access.</p>
-    <p style="margin-bottom:22px">Ask the owner to add <b id="d-email" style="font-weight:500;color:var(--gold-hi);word-break:break-all"></b> under Staff.</p>
-    <button class="btn" id="d-out">Sign out</button>
-    <p class="dim sm" style="margin-top:22px;word-break:break-all">ID: <span id="d-uid"></span></p>
-  </div>
+<div id="guard" role="status" aria-live="polite">
+  <div><div class="brand"><b>LXL</b><small>Admin</small></div><div class="spin"></div><p>Verifying access&hellip;</p></div>
 </div>
 
 <div id="app" hidden>
@@ -219,7 +207,7 @@ input[type=date]{color-scheme:dark}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, collection, doc, onSnapshot, addDoc, setDoc, updateDoc, deleteDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -556,44 +544,56 @@ document.addEventListener("change",ev=>{
 });
 $("#dClose").onclick=closeDrawer; $("#veil").onclick=closeDrawer;
 document.addEventListener("keydown",ev=>{ if(ev.key==="Escape") closeDrawer(); });
-$("#signout").onclick=()=>signOut(auth); $("#d-out").onclick=()=>signOut(auth);
-
-/* ---------- auth ---------- */
-const show=id=>["login","denied","app"].forEach(x=>$("#"+x).hidden=x!==id);
-const provider=new GoogleAuthProvider(); provider.setCustomParameters({prompt:"select_account"});
-$("#g-btn").onclick=async()=>{
-  const er=$("#l-err"), b=$("#g-btn"); er.textContent=""; b.disabled=true;
-  try{ await signInWithPopup(auth,provider); }
-  catch(err){
-    if(err.code==="auth/popup-blocked"){ try{ await signInWithRedirect(auth,provider); return; }catch(x){} }
-    er.textContent=(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request")?"":
-      err.code==="auth/unauthorized-domain"?"This website address is not authorised in Firebase (Authentication > Settings > Authorized domains).":
-      err.code==="auth/operation-not-allowed"?"Google sign-in is not turned on in Firebase Authentication yet.":
-      "Could not sign in with Google. Please try again.";
-  }
-  b.disabled=false;
-};
+/* ---------- access guard ----------
+   Nothing is shown and no data is loaded until the signed-in Google account is
+   verified as the owner or an active staff member. Any failure signs the user out
+   and sends them to index.html. (Real enforcement is Firestore security rules.) */
+const LEAVE="index.html";
+let leaving=false, staffUnsub=null;
+function leave(reason){
+  if(leaving) return; leaving=true;
+  stopListeners(); if(staffUnsub){ staffUnsub(); staffUnsub=null; }
+  S.staff=null; S.isAdmin=false; S.user=null;
+  closeDrawer(); $("#app").hidden=true; $("#view").innerHTML=""; $("#guard").hidden=false;
+  const go=()=>location.replace(LEAVE+(reason?"?denied=1":""));
+  signOut(auth).catch(()=>{}).then(go);
+  setTimeout(go,2500);
+}
+$("#signout").onclick=()=>leave("");
+window.addEventListener("pageshow",ev=>{ if(ev.persisted) location.reload(); });
 function stopListeners(){ S.unsubs.forEach(u=>u()); S.unsubs=[]; S.quotes=[]; S.jobs=[]; S.staffList=[]; }
 function listen(name,key,map){
   S.unsubs.push(onSnapshot(collection(db,name),snap=>{ S[key]=snap.docs.map(d=>map(d.id,d.data())); render(); },err=>{ console.error(name,err); toast("Cannot load "+name+": "+(err.code==="permission-denied"?"permission denied (check Firestore rules).":err.message),true); }));
 }
 onAuthStateChanged(auth,async user=>{
-  stopListeners(); S.user=user; S.staff=null; S.isAdmin=false; closeDrawer();
-  if(!user){ show("login"); return; }
+  if(leaving) return;
+  stopListeners(); if(staffUnsub){ staffUnsub(); staffUnsub=null; }
+  closeDrawer(); S.user=user; S.staff=null; S.isAdmin=false;
+  $("#app").hidden=true; $("#guard").hidden=false; window.__lxlOk=false;
+  if(!user){ leave(""); return; }
   S.myId=(user.email||"").toLowerCase();
   if(user.uid===OWNER_UID){ S.staff={name:user.displayName||"Owner",role:"admin"}; }
   else{
-    let snap=null; try{ if(S.myId) snap=await getDoc(doc(db,"staff",S.myId)); }catch(err){}
-    if(!snap||!snap.exists()||snap.data().active===false){ $("#d-email").textContent=user.email||"(no email)"; $("#d-uid").textContent=user.uid; show("denied"); return; }
+    if(!S.myId||user.emailVerified===false){ leave("1"); return; }
+    let snap=null;
+    try{ snap=await getDoc(doc(db,"staff",S.myId)); }catch(err){ leave("1"); return; }
+    if(auth.currentUser!==user) return;
+    if(!snap.exists()||snap.data().active===false){ leave("1"); return; }
     S.staff=snap.data();
+    const role0=S.staff.role;
+    staffUnsub=onSnapshot(doc(db,"staff",S.myId),s=>{
+      if(!s.exists()||s.data().active===false){ leave("1"); return; }
+      if(s.data().role!==role0) location.reload();
+    },()=>leave("1"));
   }
   S.isAdmin=S.staff.role==="admin";
   $("#me-name").textContent=S.staff.name||user.email;
-  show("app");
   listen("quoteRequests","quotes",(id,d)=>{ const ts=tsOf(d.createdAt); return {id,...d,name:d.name||"",phone:d.phone||"",email:d.email||"",service:d.service||"",details:d.details||"",status:QSTAT[d.status]?d.status:"new",_ts:ts,_date:ymd(new Date(ts))}; });
   listen("jobs","jobs",(id,d)=>({id,...d,title:d.title||"",clientName:d.clientName||"",service:d.service||"Other",status:JSTAT[d.status]?d.status:"scheduled",startDate:d.startDate||"",price:Number(d.price)||0,paid:Number(d.paid)||0}));
   if(S.isAdmin) listen("staff","staffList",(id,d)=>({id,...d}));
   if(!PAGES[S.page]||(PAGES[S.page].admin&&!S.isAdmin)) S.page="requests";
+  window.__lxlOk=true;
+  $("#app").hidden=false; $("#guard").hidden=true;
   render();
 });
 </script>
