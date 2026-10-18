@@ -206,7 +206,7 @@ td b{font-weight:400;color:var(--ivory)}td small{display:block;color:var(--mute)
     <div class="logo"><b>LXL</b><small>Admin Dashboard</small></div>
     <h1>No access yet</h1>
     <p class="mute" style="margin-bottom:16px">You are signed in, but this account has not been given staff access. Ask the owner to add you under Staff.</p>
-    <p class="dim" style="font-size:12.5px;word-break:break-all;margin-bottom:20px">Signed in as <b id="d-uid"></b>. Owner setting this up for the first time? Create a document in the Firestore <b>staff</b> collection whose ID is this email address in lowercase (see the setup steps).</p>
+    <p class="dim" style="font-size:13px;word-break:break-all;margin-bottom:12px">Signed in as <b id="d-email"></b></p><p class="dim" style="font-size:13px;word-break:break-all;margin-bottom:20px">Your UID (tap to select): <b id="d-uid" style="user-select:all;color:var(--gold-hi);font-weight:400"></b><br><br>Owner setting this up for the first time? In Firestore, create a document in the <b>staff</b> collection whose Document ID is this UID (see the setup steps).</p>
     <button class="btn" id="d-out">Sign out</button>
   </div>
 </div>
@@ -640,10 +640,10 @@ function openStaff(id){
   S.drawer={type:"staff",id:id||null};
   const self = s && s.id===S.myId;
   openDrawer(id?"Staff member":"Add staff member",`
-    ${id?"":`<p class="mute" style="margin-bottom:18px">Enter the Google (Gmail) address they will sign in with. No password is needed.</p>`}
+    ${id?"":`<p class="mute" style="margin-bottom:18px">Ask them to open the admin page and sign in with Google. They will see a “No access yet” screen showing their UID. Paste that UID here.</p>`}
     <div class="grid2">
       <div class="full"><label for="ds-name">Name</label><input id="ds-name" value="${e(s?s.name:"")}"></div>
-      <div class="full"><label for="ds-email">Google email</label><input id="ds-email" type="email" value="${e(s?s.email:"")}" ${id?"disabled":""}></div>
+      ${id?"":`<div class="full"><label for="ds-uid">User ID (UID)</label><input id="ds-uid" autocomplete="off" placeholder="Paste the UID from their No access screen"></div>`}<div class="full"><label for="ds-email">Email (for your reference)</label><input id="ds-email" type="email" value="${e(s?s.email:"")}" ${id?"disabled":""}></div>
       
       <div><label for="ds-role">Role</label><select id="ds-role" ${self?"disabled":""}><option value="receptionist" ${s&&s.role==="receptionist"||!s?"selected":""}>Receptionist</option><option value="admin" ${s&&s.role==="admin"?"selected":""}>Admin</option></select></div>
       <div><label for="ds-active">Access</label><select id="ds-active" ${self?"disabled":""}><option value="1" ${!s||s.active!==false?"selected":""}>Active</option><option value="0" ${s&&s.active===false?"selected":""}>Disabled</option></select></div>
@@ -723,10 +723,10 @@ const A = {
     const id=S.drawer.id, name=val("ds-name"), role=val("ds-role"), active=val("ds-active")!=="0";
     if(!name){ toast("Name is required.",true); return; }
     if(id){ const self=id===S.myId; await updateDoc(doc(db,"staff",id), self?{name}:{name,role,active}); closeDrawer(); toast("Saved."); return; }
-    const email=val("ds-email").toLowerCase();
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ toast("Enter a valid Google email address.",true); return; }
-    if(S.staffList.some(x=>x.id===email)){ toast("That person is already on the list.",true); return; }
-    await setDoc(doc(db,"staff",email),{name,email,role,active,createdAt:Timestamp.now()});
+    const email=val("ds-email"), nid=val("ds-uid");
+    if(!/^[A-Za-z0-9]{20,40}$/.test(nid)){ toast("Paste their full UID (letters and numbers only).",true); return; }
+    if(S.staffList.some(x=>x.id===nid)){ toast("That person is already on the list.",true); return; }
+    await setDoc(doc(db,"staff",nid),{name,email,role,active,createdAt:Timestamp.now()});
     closeDrawer(); toast("Added. They can now sign in with Google.");
   }),
   "del-staff": async t => { if(await ask("Remove this person's access? They will no longer be able to open the dashboard.","Remove")) guard(t, async()=>{ await deleteDoc(doc(db,"staff",S.drawer.id)); closeDrawer(); toast("Access removed."); }); },
@@ -787,8 +787,8 @@ onAuthStateChanged(auth, async user => {
   stopListeners(); S.user=user; S.staff=null; S.isAdmin=false; closeDrawer();
   if(!user){ show("login"); return; }
   let snap;
-  S.myId=(user.email||"").toLowerCase(); try{ snap = S.myId ? await getDoc(doc(db,"staff",S.myId)) : null; }catch(err){ snap=null; }
-  if(!snap || !snap.exists() || snap.data().active===false){ $("#d-uid").textContent=user.email||""; show("denied"); return; }
+  S.myId=user.uid; try{ snap = await getDoc(doc(db,"staff",S.myId)); }catch(err){ snap=null; }
+  if(!snap || !snap.exists() || snap.data().active===false){ $("#d-uid").textContent=user.uid; $("#d-email").textContent=user.email||""; show("denied"); return; }
   S.staff=snap.data(); S.isAdmin=S.staff.role==="admin";
   $("#me-name").textContent=S.staff.name||user.email; $("#me-role").textContent=S.isAdmin?"Admin":"Receptionist";
   show("app");
