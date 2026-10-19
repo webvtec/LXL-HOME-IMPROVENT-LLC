@@ -96,7 +96,16 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
 .nav a:not(.btn):hover { color: var(--gold-hi); }
 .nav .btn { padding: 14px 22px; min-height: 0; font-size: 11px; }
 @media (max-width: 860px) { .nav a:not(.btn) { display: none; } }
-@media (max-width: 480px) { .logo span { display: none; } .nav .btn { padding: 13px 16px; letter-spacing: .2em; } }
+.logo { min-width: 0; }
+.logo span { white-space: normal; }
+@media (max-width: 860px) { .logo span { letter-spacing: .22em; } }
+@media (max-width: 480px) {
+  .hdr .wrap { gap: 10px; }
+  .logo { gap: 9px; }
+  .logo b { font-size: 24px; letter-spacing: .1em; }
+  .logo span { font-size: 8.5px; letter-spacing: .14em; line-height: 1.3; padding-left: 9px; }
+  .nav .btn { padding: 11px 12px; letter-spacing: .14em; font-size: 10px; flex: none; }
+}
 
 /* hero */
 .hero {
@@ -135,6 +144,38 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
   .hero .tags span + span::before { margin-right: 18px; }
   .hero .cta .btn { width: 100%; }
 }
+
+/* view our work + gallery */
+.viewwork { margin-top: 56px; display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.viewwork-note { display: flex; flex-direction: column; align-items: center; gap: 12px; font: 400 12px/1.4 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--gold-hi); text-shadow: 0 1px 12px rgba(0,0,0,.85); }
+.viewwork-note::after { content: ""; width: 9px; height: 9px; border-right: 1px solid var(--gold-hi); border-bottom: 1px solid var(--gold-hi); transform: rotate(45deg); animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 0%, 100% { transform: translateY(0) rotate(45deg); } 50% { transform: translateY(5px) rotate(45deg); } }
+@media (prefers-reduced-motion: reduce) { .viewwork-note::after { animation: none; } }
+.gbtns { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+.gbtn { display: inline-flex; align-items: center; gap: 14px; padding: 16px 28px; min-height: 52px; font: 500 12px/1 var(--body); letter-spacing: .3em; text-transform: uppercase; color: var(--ivory); background: rgba(10,10,10,.55); border: 1px solid var(--gold); border-radius: 0; cursor: pointer; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); box-shadow: 0 6px 22px rgba(0,0,0,.45); transition: background .25s, color .25s, transform .25s; }
+.gbtn::after { content: "\2192"; font-size: 15px; letter-spacing: 0; color: var(--gold); transition: transform .25s, color .25s; }
+.gbtn:hover, .gbtn:focus-visible { background: var(--gold-grad); color: var(--black); transform: translateY(-2px); }
+.gbtn:hover::after, .gbtn:focus-visible::after { color: var(--black); transform: translateX(4px); }
+@media (max-width: 560px) { .viewwork { margin-top: 44px; } .gbtns { width: 100%; flex-direction: column; } .gbtn { width: 100%; justify-content: space-between; } }
+
+.gal { position: fixed; inset: 0; z-index: 70; background: var(--black); overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.gal[hidden], .lb[hidden] { display: none; }
+.gal-bar { position: sticky; top: 0; z-index: 2; padding-top: env(safe-area-inset-top, 0px); background: rgba(10,10,10,.96); border-bottom: 1px solid var(--hair); }
+.gal-bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--hdr); }
+.gal-bar .btn { padding: 12px 20px; min-height: 0; font-size: 11px; }
+.gal-bar .logo b { font-size: 26px; }
+.gal-body { padding-top: clamp(40px, 6vw, 72px); padding-bottom: 96px; }
+.gal-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.gtab { padding: 12px 20px; font: 500 11px/1 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--mute); background: transparent; border: 1px solid var(--hair); cursor: pointer; transition: .25s; }
+.gtab:hover { color: var(--ivory); border-color: var(--gold); }
+.gtab.on { color: var(--black); background: var(--gold-grad); border-color: var(--gold); }
+.gal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; margin-top: 36px; }
+.gal-item { display: block; padding: 0; border: 1px solid var(--hair); background: var(--graphite); cursor: zoom-in; aspect-ratio: 4 / 3; overflow: hidden; }
+.gal-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+.gal-item:hover img { transform: scale(1.04); }
+.gal-msg { margin-top: 36px; color: var(--mute); }
+.lb { position: fixed; inset: 0; z-index: 75; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.96); cursor: zoom-out; }
+.lb img { max-width: 100%; max-height: 92vh; object-fit: contain; }
 
 /* sections */
 .sec { padding: clamp(72px, 10vw, 140px) 0; }
@@ -249,6 +290,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
 @media (max-width: 899px) { .quote-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { form { grid-template-columns: minmax(0, 1fr); } .form-foot .btn { width: 100%; } }
 
+.reach-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px 72px; margin-top: 40px; }
+.reach-list li { display: grid; gap: 8px; text-align: center; }
+.reach-list li > span { font: 400 11px/1.2 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--gold); }
+.reach-list a { font: 400 clamp(24px, 3.2vw, 32px)/1.2 var(--display); letter-spacing: .04em; overflow-wrap: anywhere; }
+.reach-list a:hover { color: var(--gold-hi); }
+
 /* footer */
 .foot { background: var(--black); border-top: 1px solid var(--hair); }
 .foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px 56px; padding-top: 64px; padding-bottom: 44px; }
@@ -282,7 +329,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
 
 <header class="hdr">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="LXL Home Improvement, back to top"><b>LXL</b><span>Home Improvement</span></a>
+    <a class="logo" href="#top" aria-label="LXL Home Improvement LLC, back to top"><b>LXL</b><span>Home Improvement LLC</span></a>
     <nav class="nav" aria-label="Main">
       <a href="#about">About</a>
       <a href="#services">Services</a>
@@ -298,13 +345,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
   <section class="hero">
     <div class="hero-photo" data-slot="hero" role="img" aria-label="Finished luxury interior"></div>
     <div class="wrap">
-      <p class="kicker">LXL Home Improvement LLC</p>
       <h1>LXL versed like the universe.</h1>
       <p class="lede">Interior renovations, exterior upgrades and everyday repairs for residential homes only, handled with the care of a custom build and priced in writing before work begins.</p>
       <div class="cta">
         <a class="btn btn-gold" href="#quote">Request an estimate</a>
       </div>
-      <p class="tags" aria-hidden="true"><span>Repairs</span><span>Remodels</span><span>Renovations</span></p>
+      <div class="viewwork">
+        <p class="viewwork-note">Click here to view our work</p>
+        <div class="gbtns">
+          <button type="button" class="gbtn" data-gallery="repairs">Repairs</button>
+          <button type="button" class="gbtn" data-gallery="remodels">Remodels</button>
+          <button type="button" class="gbtn" data-gallery="renovations">Renovations</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -426,7 +479,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
       <div>
         <p class="kicker">Start a project</p>
         <h2>Request an <em>estimate.</em></h2>
-        <p class="lede">Describe the job in a few lines. Photos help, and we can ask for them when we reply.</p>
+        <p class="lede">Describe the job in a few lines.</p>
         <div class="rule"></div>
       </div>
       <form id="quoteForm" novalidate>
@@ -458,14 +511,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
   <section class="sec" id="contact">
     <div class="wrap quote-grid">
       <div>
-        <p class="kicker">Contact us</p>
+        <p class="kicker">Message us</p>
         <h2>Send us a <em>message.</em></h2>
         <p class="lede">Questions before you request an estimate? Send a message and we will reply by email or WhatsApp.</p>
-        <ul class="contact-list">
-          <li><span>WhatsApp / Phone</span><a data-wa href="#" target="_blank" rel="noopener">(332) 260-8942</a></li>
-          <li><span>Owner / Manager</span>Lucan S. Francis</li>
-          <li><span>HIC Lic. #</span><span data-hic>[LICENSE NUMBER]</span></li>
-        </ul>
         <div class="rule"></div>
       </div>
       <form id="contactForm" novalidate>
@@ -481,25 +529,28 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
       </form>
     </div>
   </section>
+
+  <section class="sec alt" id="reach">
+    <div class="wrap">
+      <div class="head center">
+        <p class="kicker">Contact us</p>
+        <h2>Call or <em>email us.</em></h2>
+      </div>
+      <ul class="reach-list">
+        <li><span>Phone</span><a href="tel:+13322608942">(332) 260-8942</a></li>
+        <li id="reachEmail" hidden><span>Email</span><a data-email href="#"></a></li>
+      </ul>
+    </div>
+  </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
     <div>
-      <div class="logo"><b>LXL</b><span>Home Improvement</span></div>
-      <p style="margin-top:14px">LXL Home Improvement LLC</p>
-      <p>Lucan S. Francis, Owner / Manager</p>
-      <p>HIC Lic. # <span data-hic>[LICENSE NUMBER]</span></p>
-      <p>Residential only</p>
+      <div class="logo"><b>LXL</b><span>Home Improvement LLC</span></div>
     </div>
-    <ul>
-      <li>Interior renovations</li>
-      <li>Exterior upgrades</li>
-      <li>Bathroom repair and refurbish</li>
-      <li>Home repairs and handyman tasks</li>
-    </ul>
     <div><a class="btn btn-line" href="#" data-signin>Admin login</a></div>
-    <p class="small">&copy; 2026 LXL Home Improvement LLC. All rights reserved.</p>
+    <p class="small">&copy; <span id="yr">2026</span> LXL Home Improvement LLC. All rights reserved.</p>
   </div>
 </footer>
 
@@ -519,6 +570,19 @@ document.querySelectorAll("[data-wa]").forEach(function (a) {
 /* EDIT: your HIC license number, shown in the About, Contact and footer sections. */
 var HIC_LICENSE = "";
 if (HIC_LICENSE) document.querySelectorAll("[data-hic]").forEach(function (s) { s.textContent = HIC_LICENSE; });
+
+/* EDIT: your public contact email. Leave empty to hide the email line in the Contact us section. */
+var CONTACT_EMAIL = "";
+if (CONTACT_EMAIL) {
+  var emailLink = document.querySelector("[data-email]");
+  emailLink.href = "mailto:" + CONTACT_EMAIL;
+  emailLink.textContent = CONTACT_EMAIL;
+  document.getElementById("reachEmail").hidden = false;
+}
+
+/* Footer year updates itself every year. */
+var yrEl = document.getElementById("yr");
+if (yrEl) yrEl.textContent = new Date().getFullYear();
 
 /* Project photos (Unsplash, free to use). Swap any URL for your own project photo.
    If an image cannot load, the dark gold-lit panel behind it shows instead. */
@@ -650,6 +714,115 @@ Object.keys(PHOTOS).forEach(function (slot) {
       clearTimeout(timer);
       btn.disabled = false;
     });
+  });
+})();
+</script>
+
+<div class="gal" id="gallery" role="dialog" aria-modal="true" aria-labelledby="galTitle" hidden>
+  <div class="gal-bar">
+    <div class="wrap">
+      <div class="logo"><b>LXL</b><span>Home Improvement LLC</span></div>
+      <button type="button" class="btn btn-line" id="galClose">&larr; Back</button>
+    </div>
+  </div>
+  <div class="wrap gal-body">
+    <p class="kicker">Our work</p>
+    <h2 id="galTitle"></h2>
+    <div class="gal-tabs" id="galTabs">
+      <button type="button" class="gtab" data-gallery="repairs">Repairs</button>
+      <button type="button" class="gtab" data-gallery="remodels">Remodels</button>
+      <button type="button" class="gtab" data-gallery="renovations">Renovations</button>
+    </div>
+    <div class="gal-grid" id="galGrid"></div>
+    <p class="gal-msg" id="galMsg" role="status" aria-live="polite"></p>
+  </div>
+</div>
+<div class="lb" id="lb" hidden><img alt=""></div>
+
+<script>
+/* Work gallery: photos uploaded in the admin dashboard (Gallery tab) load when a visitor opens a category. */
+(function () {
+  var CATS = { repairs: "Repairs", remodels: "Remodels", renovations: "Renovations" };
+  var gal = document.getElementById("gallery"), grid = document.getElementById("galGrid"),
+      msg = document.getElementById("galMsg"), title = document.getElementById("galTitle"),
+      tabs = document.getElementById("galTabs"), lb = document.getElementById("lb"),
+      lbImg = lb.querySelector("img"), closeBtn = document.getElementById("galClose");
+  var cache = {}, cur = "", opener = null;
+
+  function load(cat) {
+    if (cache[cat]) return Promise.resolve(cache[cat]);
+    var url = "https://firestore.googleapis.com/v1/projects/" + firebaseConfig.projectId +
+      "/databases/(default)/documents:runQuery?key=" + firebaseConfig.apiKey;
+    var body = { structuredQuery: { from: [{ collectionId: "gallery" }],
+      where: { fieldFilter: { field: { fieldPath: "category" }, op: "EQUAL", value: { stringValue: cat } } }, limit: 60 } };
+    return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (rows) {
+        var items = rows.filter(function (r) { return r.document && r.document.fields && r.document.fields.image; })
+          .map(function (r) {
+            var f = r.document.fields;
+            return { src: f.image.stringValue, t: (f.createdAt && f.createdAt.timestampValue) || "" };
+          });
+        items.sort(function (a, b) { return a.t < b.t ? 1 : a.t > b.t ? -1 : 0; });
+        cache[cat] = items;
+        return items;
+      });
+  }
+
+  function show(cat) {
+    cur = cat;
+    title.textContent = CATS[cat];
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      var on = b.getAttribute("data-gallery") === cat;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    grid.innerHTML = "";
+    msg.textContent = "Loading photos...";
+    gal.scrollTop = 0;
+    load(cat).then(function (items) {
+      if (cur !== cat) return;
+      if (!items.length) { msg.textContent = "New photos are coming soon. Request an estimate and we will be happy to show you recent work."; return; }
+      msg.textContent = "";
+      items.forEach(function (it) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "gal-item"; b.setAttribute("aria-label", "View photo larger");
+        var im = new Image();
+        im.alt = CATS[cat] + " project photo"; im.loading = "lazy"; im.decoding = "async"; im.src = it.src;
+        b.appendChild(im);
+        b.addEventListener("click", function () { lbImg.src = it.src; lb.hidden = false; });
+        grid.appendChild(b);
+      });
+    }).catch(function () {
+      if (cur === cat) msg.textContent = "Photos could not be loaded right now. Please try again shortly.";
+    });
+  }
+
+  function openGal(cat, from) {
+    if (gal.hidden) { opener = from || null; }
+    gal.hidden = false;
+    document.documentElement.style.overflow = "hidden";
+    show(cat);
+    if (from) closeBtn.focus({ preventScroll: true });
+  }
+  function closeGal() {
+    lb.hidden = true;
+    gal.hidden = true;
+    document.documentElement.style.overflow = "";
+    if (opener) { try { opener.focus({ preventScroll: true }); } catch (e) {} }
+  }
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest("[data-gallery]");
+    if (!t) return;
+    openGal(t.getAttribute("data-gallery"), t.classList.contains("gtab") ? null : t);
+  });
+  closeBtn.addEventListener("click", closeGal);
+  lb.addEventListener("click", function () { lb.hidden = true; lbImg.removeAttribute("src"); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key !== "Escape") return;
+    if (!lb.hidden) { lb.hidden = true; return; }
+    if (!gal.hidden) closeGal();
   });
 })();
 </script>
