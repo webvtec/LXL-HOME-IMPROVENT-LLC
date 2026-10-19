@@ -513,7 +513,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
       <div>
         <p class="kicker">Message us</p>
         <h2>Send us a <em>message.</em></h2>
-        <p class="lede">Questions before you request an estimate? Send a message and we will reply by email or WhatsApp.</p>
+        <p class="lede">Questions before you request an estimate? Send a message and we will reply by email.</p>
         <div class="rule"></div>
       </div>
       <form id="contactForm" novalidate>
@@ -706,7 +706,7 @@ Object.keys(PHOTOS).forEach(function (slot) {
       signal: ctrl ? ctrl.signal : undefined
     }).then(function (res) {
       if (!res.ok) throw new Error("HTTP " + res.status);
-      say("Thank you. Your message has been received and we will reply by email or WhatsApp.", "ok");
+      say("Thank you. Your message has been received and we will reply by email.", "ok");
       form.reset();
     }).catch(function () {
       say("Your message did not go through. Check your connection and try again.", "err");
@@ -758,10 +758,10 @@ Object.keys(PHOTOS).forEach(function (slot) {
     return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
       .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
       .then(function (rows) {
-        var items = rows.filter(function (r) { return r.document && r.document.fields && r.document.fields.image; })
+        var items = rows.filter(function (r) { return r.document && r.document.fields && (r.document.fields.url || r.document.fields.image); })
           .map(function (r) {
             var f = r.document.fields;
-            return { src: f.image.stringValue, t: (f.createdAt && f.createdAt.timestampValue) || "" };
+            return { src: (f.url || f.image).stringValue, t: (f.createdAt && f.createdAt.timestampValue) || "" };
           });
         items.sort(function (a, b) { return a.t < b.t ? 1 : a.t > b.t ? -1 : 0; });
         cache[cat] = items;

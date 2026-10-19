@@ -172,6 +172,17 @@ input[type=date]{color-scheme:dark}
 .toast.show{opacity:1;transform:translateX(-50%)}.toast.bad{border-color:var(--red);color:var(--red)}
 .note{padding:14px 18px;border:1px solid var(--line);background:rgba(201,162,75,.06);border-radius:12px;font-size:14px;color:var(--mute);margin-bottom:16px}
 
+/* reply */
+.reply{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.reply h3{font:600 22px/1.1 var(--display);margin-bottom:12px}
+.reply .chips{margin-bottom:14px}.chip[disabled]{opacity:.4;pointer-events:none}
+.reply textarea{min-height:110px}
+.rnote{font-size:12.5px;color:var(--dim);margin:8px 0 14px}
+#thread h4{font:600 18px/1.1 var(--display);margin:24px 0 10px}
+.msg{padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg .mh{display:flex;justify-content:space-between;gap:10px;align-items:center;color:var(--mute);font-size:12.5px;margin-bottom:6px}
+.s-queued{background:rgba(230,200,119,.15);color:var(--gold-hi)}.s-sent{background:rgba(127,197,146,.15);color:var(--green)}.s-failed{background:rgba(232,139,130,.15);color:var(--red)}
+
 /* gallery */
 .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .gph{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--card2);border:1px solid var(--line)}
@@ -217,6 +228,7 @@ input[type=file]{padding:9px 11px}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getStorage, ref as sref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
 import { getFirestore, collection, doc, onSnapshot, addDoc, setDoc, updateDoc, deleteDoc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -231,6 +243,7 @@ const OWNER_UID = "VdQh2hDkOQP5ErDDZk2b7K8o1fJ2"; /* business owner: always full
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 /* ---------- constants ---------- */
 const QSTAT = { new:"New", contacted:"Contacted", quoted:"Quoted", won:"Won", lost:"Lost" };
@@ -272,7 +285,7 @@ const waLink = p => { let d=String(p||"").replace(/\D/g,""); if(d.length===10) d
 
 /* ---------- state ---------- */
 const S = { user:null, staff:null, isAdmin:false, myId:"", page:"requests", range:"30d", cFrom:"", cTo:"",
-  quotes:[], jobs:[], staffList:[], gallery:[], gCat:"all", gUpCat:"repairs", gFiles:[], gStatus:"", gBusy:false, qStatus:"all", qSearch:"", jStatus:"all", jSearch:"",
+  quotes:[], jobs:[], staffList:[], gallery:[], outbox:[], replyCh:"email", gCat:"all", gUpCat:"repairs", gFiles:[], gStatus:"", gBusy:false, qStatus:"all", qSearch:"", jStatus:"all", jSearch:"",
   cal:new Date(), calDay:ymd(new Date()), drawer:null, unsubs:[] };
 try { const r = localStorage.getItem("lxl.range"); if (r && RANGES.some(x=>x[0]===r)) S.range = r; } catch(x){}
 
@@ -392,7 +405,7 @@ function pageGallery(){
       <div><label for="g-file">Photos</label><input id="g-file" type="file" accept="image/*" multiple></div></div>
     <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><button class="btn gold" data-act="upload-gallery" ${S.gBusy?"disabled":""}>Upload photos</button><span id="g-status" class="mute sm">${e(S.gStatus)}</span></div></div>
   <div class="tools"><div class="chips">${["all",...Object.keys(GCATS)].map(k=>`<button class="chip ${S.gCat===k?"on":""}" data-act="gfilter" data-k="${k}">${k==="all"?"All":GCATS[k]}<em>${cnt(k)}</em></button>`).join("")}</div></div>
-  ${list.length?`<div class="ggrid">${list.map(g=>`<div class="gph"><img src="${e(g.image)}" alt="" loading="lazy"><span class="gtag">${e(GCATS[g.category]||g.category)}</span>${S.isAdmin?`<button class="gdel" data-act="del-photo" data-id="${e(g.id)}" aria-label="Delete photo">&times;</button>`:""}</div>`).join("")}</div>`:`<div class="card"><div class="empty"><b>No photos yet</b>Upload photos above and they will appear on the website.</div></div>`}`;
+  ${list.length?`<div class="ggrid">${list.map(g=>`<div class="gph"><img src="${e(g.src)}" alt="" loading="lazy"><span class="gtag">${e(GCATS[g.category]||g.category)}</span>${S.isAdmin?`<button class="gdel" data-act="del-photo" data-id="${e(g.id)}" aria-label="Delete photo">&times;</button>`:""}</div>`).join("")}</div>`:`<div class="card"><div class="empty"><b>No photos yet</b>Upload photos above and they will appear on the website.</div></div>`}`;
 }
 
 function pageStaff(){
@@ -439,8 +452,16 @@ function openQuote(id){
     <div class="quick">${q.phone?`<a class="btn small" href="tel:${e(q.phone)}">Call</a><a class="btn small" href="${e(waLink(q.phone))}" target="_blank" rel="noopener">WhatsApp</a>`:""}${q.email?`<a class="btn small" href="mailto:${e(q.email)}">Email</a>`:""}</div>
     <div class="g2"><div><label for="dq-status">Status</label><select id="dq-status">${kopts(QSTAT,q.status)}</select></div>
       <div><label for="dq-amount">Quoted amount ($)</label><input id="dq-amount" inputmode="decimal" value="${q.quotedAmount||""}"></div>
-      <div class="full"><label for="dq-notes">Notes</label><textarea id="dq-notes" placeholder="Call notes, site visit, what was agreed...">${e(q.notes||"")}</textarea></div></div>`,
+      <div class="full"><label for="dq-notes">Notes</label><textarea id="dq-notes" placeholder="Call notes, site visit, what was agreed...">${e(q.notes||"")}</textarea></div></div>
+    <div class="reply"><h3>Reply</h3>
+      <div class="chips"><button type="button" class="chip" data-act="rch" data-k="email" ${q.email?"":"disabled"}>Email</button><button type="button" class="chip" data-act="rch" data-k="sms" ${q.phone?"":"disabled"}>Text message</button></div>
+      <div id="rsub"><label for="dr-sub">Subject</label><input id="dr-sub" value="Re: your LXL Home Improvement request" style="margin-bottom:14px"></div>
+      <label for="dr-msg">Message</label><textarea id="dr-msg" placeholder="Hi ${e((q.name||"").split(" ")[0])}, thanks for reaching out..."></textarea>
+      <div class="rnote" id="rto"></div>
+      <button type="button" class="btn gold" id="rsend" data-act="send-reply">Send email</button>
+      <div id="thread"></div></div>`,
     `<button class="btn gold" data-act="save-quote">Save</button><button class="btn" data-act="quote-to-job">Create job</button>${S.isAdmin?`<button class="btn danger sp" data-act="del-quote">Delete</button>`:""}`);
+  setReplyCh(q.email?"email":"sms"); refreshThread();
 }
 function newQuoteDrawer(){
   S.drawer={type:"quote-new"};
@@ -492,19 +513,29 @@ function setGStatus(m){ S.gStatus=m; const el=$("#g-status"); if(el) el.textCont
 function shrinkImage(file){ return new Promise((res,rej)=>{
   const url=URL.createObjectURL(file), img=new Image();
   img.onload=()=>{ URL.revokeObjectURL(url);
-    let max=1400, q=.8;
-    for(let n=0;n<6;n++){
-      const sc=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement("canvas");
-      c.width=Math.max(1,Math.round(img.naturalWidth*sc)); c.height=Math.max(1,Math.round(img.naturalHeight*sc));
-      const ctx=c.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(img,0,0,c.width,c.height);
-      const out=c.toDataURL("image/jpeg",q);
-      if(out.length<=800000) return res(out);
-      max=Math.round(max*.8); q=Math.max(.5,q-.05);
-    }
-    rej(new Error("Photo is too large"));
+    const sc=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight)), c=document.createElement("canvas");
+    c.width=Math.max(1,Math.round(img.naturalWidth*sc)); c.height=Math.max(1,Math.round(img.naturalHeight*sc));
+    const ctx=c.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(b=>b?res(b):rej(new Error("Could not process photo")),"image/jpeg",.85);
   };
   img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("Unsupported image")); };
   img.src=url; }); }
+
+/* ---------- reply composer ---------- */
+const OSTAT = { queued:"Queued", sent:"Sent", failed:"Failed" };
+function setReplyCh(ch){
+  const q=S.drawer&&S.quotes.find(x=>x.id===S.drawer.id); S.replyCh=ch;
+  document.querySelectorAll('[data-act="rch"]').forEach(b=>b.classList.toggle("on",b.dataset.k===ch));
+  const sub=$("#rsub"); if(sub) sub.hidden=ch!=="email";
+  const to=$("#rto"), send=$("#rsend");
+  if(to&&q) to.textContent=ch==="email"?"Sends to "+(q.email||"-"):"Texts "+(q.phone||"-");
+  if(send) send.textContent=ch==="email"?"Send email":"Send text";
+}
+function refreshThread(){
+  const el=$("#thread"); if(!el||!S.drawer||S.drawer.type!=="quote") return;
+  const l=S.outbox.filter(m=>m.requestId===S.drawer.id).sort((a,b)=>b._ts-a._ts);
+  el.innerHTML=l.length?`<h4>Sent from here</h4>`+l.map(m=>`<div class="msg"><div class="mh"><span>${m.channel==="sms"?"Text":"Email"} &middot; ${e(m.staffName||m.createdBy||"")} &middot; ${ago(m._ts)}</span><span class="pill s-${e(m.status)}">${e(OSTAT[m.status]||m.status)}</span></div>${m.subject?`<b>${e(m.subject)}</b><br>`:""}${e(m.body)}</div>`).join(""):"";
+}
 
 /* ---------- actions ---------- */
 const A = {
@@ -569,12 +600,16 @@ const A = {
     for(let i=0;i<files.length;i++){
       setGStatus("Uploading "+(i+1)+" of "+files.length+"...");
       try{
-        const data=await shrinkImage(files[i]);
-        await addDoc(collection(db,"gallery"),{category:cat,image:data,createdAt:Timestamp.now(),createdBy:S.user.email});
+        const blob=await shrinkImage(files[i]);
+        const path="gallery/"+cat+"/"+Date.now()+"-"+i+".jpg";
+        const r=sref(storage,path);
+        await uploadBytes(r,blob,{contentType:"image/jpeg",cacheControl:"public,max-age=31536000"});
+        const url=await getDownloadURL(r);
+        await addDoc(collection(db,"gallery"),{category:cat,url,path,createdAt:Timestamp.now(),createdBy:S.user.email});
         ok++;
       }catch(err){
         console.error(err); bad++;
-        if(err.code==="permission-denied"){ toast("Not allowed. The Firestore rules need a gallery collection rule.",true); break; }
+        if(err.code==="permission-denied"||err.code==="storage/unauthorized"){ toast("Not allowed. Check the Storage and Firestore rules.",true); break; }
       }
     }
     S.gBusy=false; S.gFiles=[]; const inp=$("#g-file"); if(inp) inp.value="";
@@ -582,7 +617,19 @@ const A = {
     if(ok) toast(ok+" photo"+(ok>1?"s":"")+" added to the website."); else if(bad) toast("Could not upload. Try JPG or PNG photos.",true);
     render();
   },
-  "del-photo":async t=>{ if(await ask("Delete this photo from the website?","Delete")) guard(t,async()=>{ await deleteDoc(doc(db,"gallery",t.dataset.id)); toast("Photo deleted."); }); },
+  "del-photo":async t=>{ if(await ask("Delete this photo from the website?","Delete")) guard(t,async()=>{ const g=S.gallery.find(x=>x.id===t.dataset.id); await deleteDoc(doc(db,"gallery",t.dataset.id)); if(g&&g.path){ try{ await deleteObject(sref(storage,g.path)); }catch(x){ console.warn(x); } } toast("Photo deleted."); }); },
+  rch:t=>setReplyCh(t.dataset.k),
+  "send-reply":t=>guard(t,async()=>{
+    const q=S.quotes.find(x=>x.id===(S.drawer&&S.drawer.id)); if(!q) return;
+    const ch=S.replyCh, body=val("dr-msg"), subject=val("dr-sub"), to=ch==="email"?q.email:q.phone;
+    if(!to){ toast(ch==="email"?"This person has no email address.":"This person has no phone number.",true); return; }
+    if(ch==="email"&&!subject){ toast("Add a subject.",true); return; }
+    if(!body){ toast("Write a message first.",true); return; }
+    await addDoc(collection(db,"outbox"),{channel:ch,to,toName:q.name,subject:ch==="email"?subject:"",body,requestId:q.id,status:"queued",createdAt:Timestamp.now(),createdBy:S.user.email,staffName:S.staff.name||""});
+    if(q.status==="new"){ await updateDoc(doc(db,"quoteRequests",q.id),{status:"contacted",updatedAt:Timestamp.now(),updatedBy:S.user.email}); const sel=$("#dq-status"); if(sel) sel.value="contacted"; }
+    const m=$("#dr-msg"); if(m) m.value="";
+    toast(ch==="email"?"Email queued to send.":"Text queued to send.");
+  }),
 
   "export-quotes":()=>{ const R=getRange(); csv([["Received","Name","Phone","Email","Service","Status","Quoted","Details","Notes"],...S.quotes.filter(q=>(!R.f||q._date>=R.f)&&q._date<=R.t).map(q=>[q._date,q.name,q.phone,q.email,q.service,q.status,q.quotedAmount||"",q.details,q.notes||""])],"requests"); },
   "export-jobs":()=>{ const R=getRange(); csv([["Start","End","Job","Client","Phone","Address","Service","Status","Price","Paid","Balance"],...S.jobs.filter(j=>(!R.f||j.startDate>=R.f)&&j.startDate<=R.t).map(j=>[j.startDate,j.endDate||"",j.title,j.clientName,j.phone,j.address||"",j.service,j.status,j.price||0,j.paid||0,jobBal(j)])],"jobs"); },
@@ -628,9 +675,9 @@ function leave(reason){
 }
 $("#signout").onclick=()=>leave("");
 window.addEventListener("pageshow",ev=>{ if(ev.persisted) location.reload(); });
-function stopListeners(){ S.unsubs.forEach(u=>u()); S.unsubs=[]; S.quotes=[]; S.jobs=[]; S.staffList=[]; S.gallery=[]; }
+function stopListeners(){ S.unsubs.forEach(u=>u()); S.unsubs=[]; S.quotes=[]; S.jobs=[]; S.staffList=[]; S.gallery=[]; S.outbox=[]; }
 function listen(name,key,map){
-  S.unsubs.push(onSnapshot(collection(db,name),snap=>{ S[key]=snap.docs.map(d=>map(d.id,d.data())); render(); },err=>{ console.error(name,err); toast("Cannot load "+name+": "+(err.code==="permission-denied"?"permission denied (check Firestore rules).":err.message),true); }));
+  S.unsubs.push(onSnapshot(collection(db,name),snap=>{ S[key]=snap.docs.map(d=>map(d.id,d.data())); render(); refreshThread(); },err=>{ console.error(name,err); toast("Cannot load "+name+": "+(err.code==="permission-denied"?"permission denied (check Firestore rules).":err.message),true); }));
 }
 onAuthStateChanged(auth,async user=>{
   if(leaving) return;
@@ -657,7 +704,8 @@ onAuthStateChanged(auth,async user=>{
   $("#me-name").textContent=S.staff.name||user.email;
   listen("quoteRequests","quotes",(id,d)=>{ const ts=tsOf(d.createdAt); return {id,...d,name:d.name||"",phone:d.phone||"",email:d.email||"",service:d.service||"",details:d.details||"",status:QSTAT[d.status]?d.status:"new",_ts:ts,_date:ymd(new Date(ts))}; });
   listen("jobs","jobs",(id,d)=>({id,...d,title:d.title||"",clientName:d.clientName||"",service:d.service||"Other",status:JSTAT[d.status]?d.status:"scheduled",startDate:d.startDate||"",price:Number(d.price)||0,paid:Number(d.paid)||0}));
-  listen("gallery","gallery",(id,d)=>({id,...d,image:d.image||"",category:GCATS[d.category]?d.category:"repairs",_ts:tsOf(d.createdAt)}));
+  listen("gallery","gallery",(id,d)=>({id,...d,src:d.url||d.image||"",category:GCATS[d.category]?d.category:"repairs",_ts:tsOf(d.createdAt)}));
+  listen("outbox","outbox",(id,d)=>({id,...d,body:d.body||"",status:d.status||"queued",_ts:tsOf(d.createdAt)}));
   if(S.isAdmin) listen("staff","staffList",(id,d)=>({id,...d}));
   if(!PAGES[S.page]||(PAGES[S.page].admin&&!S.isAdmin)) S.page="requests";
   window.__lxlOk=true;
