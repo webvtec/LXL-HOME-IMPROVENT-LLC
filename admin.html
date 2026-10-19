@@ -172,16 +172,8 @@ input[type=date]{color-scheme:dark}
 .toast.show{opacity:1;transform:translateX(-50%)}.toast.bad{border-color:var(--red);color:var(--red)}
 .note{padding:14px 18px;border:1px solid var(--line);background:rgba(201,162,75,.06);border-radius:12px;font-size:14px;color:var(--mute);margin-bottom:16px}
 
-/* reply */
-.reply{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
-.reply h3{font:600 22px/1.1 var(--display);margin-bottom:12px}
-.reply .chips{margin-bottom:14px}.chip[disabled]{opacity:.4;pointer-events:none}
-.reply textarea{min-height:110px}
-.rnote{font-size:12.5px;color:var(--dim);margin:8px 0 14px}
-#thread h4{font:600 18px/1.1 var(--display);margin:24px 0 10px}
-.msg{padding:12px 14px;background:var(--card2);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
-.msg .mh{display:flex;justify-content:space-between;gap:10px;align-items:center;color:var(--mute);font-size:12.5px;margin-bottom:6px}
-.s-queued{background:rgba(230,200,119,.15);color:var(--gold-hi)}.s-sent{background:rgba(127,197,146,.15);color:var(--green)}.s-failed{background:rgba(232,139,130,.15);color:var(--red)}
+
+.chip[disabled]{opacity:.4;pointer-events:none}
 
 /* gallery */
 .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
@@ -239,6 +231,7 @@ const firebaseConfig = {
   messagingSenderId: "187111894816",
   appId: "1:187111894816:web:52398864d55c4bf48e7145"
 };
+const MAX_ADMINS = 3; /* owner + up to 2 staff admins. Admins receive all notification emails. */
 const OWNER_UID = "VdQh2hDkOQP5ErDDZk2b7K8o1fJ2"; /* business owner: always full access */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -285,7 +278,7 @@ const waLink = p => { let d=String(p||"").replace(/\D/g,""); if(d.length===10) d
 
 /* ---------- state ---------- */
 const S = { user:null, staff:null, isAdmin:false, myId:"", page:"requests", range:"30d", cFrom:"", cTo:"",
-  quotes:[], jobs:[], staffList:[], gallery:[], outbox:[], replyCh:"email", gCat:"all", gUpCat:"repairs", gFiles:[], gStatus:"", gBusy:false, qStatus:"all", qSearch:"", jStatus:"all", jSearch:"",
+  quotes:[], jobs:[], staffList:[], gallery:[], gCat:"all", gUpCat:"repairs", gFiles:[], gStatus:"", gBusy:false, qStatus:"all", qSearch:"", jStatus:"all", jSearch:"",
   cal:new Date(), calDay:ymd(new Date()), drawer:null, unsubs:[] };
 try { const r = localStorage.getItem("lxl.range"); if (r && RANGES.some(x=>x[0]===r)) S.range = r; } catch(x){}
 
@@ -453,15 +446,8 @@ function openQuote(id){
     <div class="g2"><div><label for="dq-status">Status</label><select id="dq-status">${kopts(QSTAT,q.status)}</select></div>
       <div><label for="dq-amount">Quoted amount ($)</label><input id="dq-amount" inputmode="decimal" value="${q.quotedAmount||""}"></div>
       <div class="full"><label for="dq-notes">Notes</label><textarea id="dq-notes" placeholder="Call notes, site visit, what was agreed...">${e(q.notes||"")}</textarea></div></div>
-    <div class="reply"><h3>Reply</h3>
-      <div class="chips"><button type="button" class="chip" data-act="rch" data-k="email" ${q.email?"":"disabled"}>Email</button><button type="button" class="chip" data-act="rch" data-k="sms" ${q.phone?"":"disabled"}>Text message</button></div>
-      <div id="rsub"><label for="dr-sub">Subject</label><input id="dr-sub" value="Re: your LXL Home Improvement request" style="margin-bottom:14px"></div>
-      <label for="dr-msg">Message</label><textarea id="dr-msg" placeholder="Hi ${e((q.name||"").split(" ")[0])}, thanks for reaching out..."></textarea>
-      <div class="rnote" id="rto"></div>
-      <button type="button" class="btn gold" id="rsend" data-act="send-reply">Send email</button>
-      <div id="thread"></div></div>`,
+`,
     `<button class="btn gold" data-act="save-quote">Save</button><button class="btn" data-act="quote-to-job">Create job</button>${S.isAdmin?`<button class="btn danger sp" data-act="del-quote">Delete</button>`:""}`);
-  setReplyCh(q.email?"email":"sms"); refreshThread();
 }
 function newQuoteDrawer(){
   S.drawer={type:"quote-new"};
@@ -497,15 +483,17 @@ function openJob(id,pre){
 }
 function refreshJob(){ const price=num(val("dj-price")), paid=num(val("dj-paid")), bal=price-paid; const el=$("#jobSum"); if(el) el.innerHTML=`<div><small>Price</small><b>${money(price)}</b></div><div><small>Paid</small><b>${money(paid)}</b></div><div><small>Balance</small><b style="color:${bal>0.005?"var(--gold-hi)":"var(--green)"}">${money(bal)}</b></div>`; }
 
+const adminSlots = (exceptId) => 1 + S.staffList.filter(x => x.role === "admin" && x.active !== false && x.id !== exceptId).length; /* 1 = the owner */
 function openStaff(id){
   const s=id?S.staffList.find(z=>z.id===id):null; if(id&&!s) return;
-  S.drawer={type:"staff",id:id||null}; const self=id&&id===S.myId;
+  S.drawer={type:"staff",id:id||null}; const self=id&&id===S.myId; const full=adminSlots(id)>=MAX_ADMINS;
   openDrawer(id?"Staff member":"Add staff",`
     ${id?"":`<p class="mute" style="margin-bottom:18px">Enter the Google (Gmail) address they will sign in with. They can sign in right away.</p>`}
     <div class="g2"><div class="full"><label for="ds-name">Name</label><input id="ds-name" value="${e(s?s.name:"")}"></div>
       <div class="full"><label for="ds-email">Google email</label><input id="ds-email" type="email" value="${e(s?s.email||s.id:"")}" ${id?"disabled":""}></div>
-      <div><label for="ds-role">Role</label><select id="ds-role" ${self?"disabled":""}><option value="receptionist" ${!s||s.role==="receptionist"?"selected":""}>Receptionist</option><option value="admin" ${s&&s.role==="admin"?"selected":""}>Admin</option></select></div>
-      ${id?`<div><label for="ds-active">Access</label><select id="ds-active" ${self?"disabled":""}><option value="1" ${s.active!==false?"selected":""}>Active</option><option value="0" ${s.active===false?"selected":""}>Turned off</option></select></div>`:""}</div>`,
+      <div><label for="ds-role">Role</label><select id="ds-role" ${self?"disabled":""}><option value="receptionist" ${!s||s.role==="receptionist"?"selected":""}>Receptionist</option><option value="admin" ${s&&s.role==="admin"?"selected":""} ${full&&!(s&&s.role==="admin")?"disabled":""}>Admin${full&&!(s&&s.role==="admin")?" (limit reached)":""}</option></select></div>
+      ${id?`<div><label for="ds-active">Access</label><select id="ds-active" ${self?"disabled":""}><option value="1" ${s.active!==false?"selected":""}>Active</option><option value="0" ${s.active===false?"selected":""}>Turned off</option></select></div>`:""}</div>
+    <p class="mute" style="margin-top:18px;font-size:13px">Admins receive every new request and job reminder by email. Admin spots used: ${adminSlots(null)} of ${MAX_ADMINS} (the owner counts as one).</p>`,
     `<button class="btn gold" data-act="save-staff">${id?"Save":"Add staff"}</button>${id&&!self?`<button class="btn danger sp" data-act="del-staff">Remove</button>`:""}`);
 }
 
@@ -520,22 +508,6 @@ function shrinkImage(file){ return new Promise((res,rej)=>{
   };
   img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("Unsupported image")); };
   img.src=url; }); }
-
-/* ---------- reply composer ---------- */
-const OSTAT = { queued:"Queued", sent:"Sent", failed:"Failed" };
-function setReplyCh(ch){
-  const q=S.drawer&&S.quotes.find(x=>x.id===S.drawer.id); S.replyCh=ch;
-  document.querySelectorAll('[data-act="rch"]').forEach(b=>b.classList.toggle("on",b.dataset.k===ch));
-  const sub=$("#rsub"); if(sub) sub.hidden=ch!=="email";
-  const to=$("#rto"), send=$("#rsend");
-  if(to&&q) to.textContent=ch==="email"?"Sends to "+(q.email||"-"):"Texts "+(q.phone||"-");
-  if(send) send.textContent=ch==="email"?"Send email":"Send text";
-}
-function refreshThread(){
-  const el=$("#thread"); if(!el||!S.drawer||S.drawer.type!=="quote") return;
-  const l=S.outbox.filter(m=>m.requestId===S.drawer.id).sort((a,b)=>b._ts-a._ts);
-  el.innerHTML=l.length?`<h4>Sent from here</h4>`+l.map(m=>`<div class="msg"><div class="mh"><span>${m.channel==="sms"?"Text":"Email"} &middot; ${e(m.staffName||m.createdBy||"")} &middot; ${ago(m._ts)}</span><span class="pill s-${e(m.status)}">${e(OSTAT[m.status]||m.status)}</span></div>${m.subject?`<b>${e(m.subject)}</b><br>`:""}${e(m.body)}</div>`).join(""):"";
-}
 
 /* ---------- actions ---------- */
 const A = {
@@ -582,6 +554,10 @@ const A = {
   "save-staff":t=>guard(t,async()=>{
     const id=S.drawer.id, name=val("ds-name"), role=val("ds-role");
     if(!name){toast("Name is required.",true);return;}
+    const prev = id ? S.staffList.find(z=>z.id===id) : null;
+    const wasCounted = !!prev && prev.role==="admin" && prev.active!==false;
+    const wantsAdmin = role==="admin" && (!id || val("ds-active")!=="0") && !wasCounted;
+    if(wantsAdmin && adminSlots(id)>=MAX_ADMINS){ toast("Maximum of "+MAX_ADMINS+" admins reached (including the owner). Make someone else a receptionist first.",true); return; }
     if(id){ const self=id===S.myId; await updateDoc(doc(db,"staff",id),self?{name}:{name,role,active:val("ds-active")!=="0"}); closeDrawer(); toast("Saved."); return; }
     const email=val("ds-email").toLowerCase();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast("Enter a valid Google email address.",true);return;}
@@ -618,18 +594,6 @@ const A = {
     render();
   },
   "del-photo":async t=>{ if(await ask("Delete this photo from the website?","Delete")) guard(t,async()=>{ const g=S.gallery.find(x=>x.id===t.dataset.id); await deleteDoc(doc(db,"gallery",t.dataset.id)); if(g&&g.path){ try{ await deleteObject(sref(storage,g.path)); }catch(x){ console.warn(x); } } toast("Photo deleted."); }); },
-  rch:t=>setReplyCh(t.dataset.k),
-  "send-reply":t=>guard(t,async()=>{
-    const q=S.quotes.find(x=>x.id===(S.drawer&&S.drawer.id)); if(!q) return;
-    const ch=S.replyCh, body=val("dr-msg"), subject=val("dr-sub"), to=ch==="email"?q.email:q.phone;
-    if(!to){ toast(ch==="email"?"This person has no email address.":"This person has no phone number.",true); return; }
-    if(ch==="email"&&!subject){ toast("Add a subject.",true); return; }
-    if(!body){ toast("Write a message first.",true); return; }
-    await addDoc(collection(db,"outbox"),{channel:ch,to,toName:q.name,subject:ch==="email"?subject:"",body,requestId:q.id,status:"queued",createdAt:Timestamp.now(),createdBy:S.user.email,staffName:S.staff.name||""});
-    if(q.status==="new"){ await updateDoc(doc(db,"quoteRequests",q.id),{status:"contacted",updatedAt:Timestamp.now(),updatedBy:S.user.email}); const sel=$("#dq-status"); if(sel) sel.value="contacted"; }
-    const m=$("#dr-msg"); if(m) m.value="";
-    toast(ch==="email"?"Email queued to send.":"Text queued to send.");
-  }),
 
   "export-quotes":()=>{ const R=getRange(); csv([["Received","Name","Phone","Email","Service","Status","Quoted","Details","Notes"],...S.quotes.filter(q=>(!R.f||q._date>=R.f)&&q._date<=R.t).map(q=>[q._date,q.name,q.phone,q.email,q.service,q.status,q.quotedAmount||"",q.details,q.notes||""])],"requests"); },
   "export-jobs":()=>{ const R=getRange(); csv([["Start","End","Job","Client","Phone","Address","Service","Status","Price","Paid","Balance"],...S.jobs.filter(j=>(!R.f||j.startDate>=R.f)&&j.startDate<=R.t).map(j=>[j.startDate,j.endDate||"",j.title,j.clientName,j.phone,j.address||"",j.service,j.status,j.price||0,j.paid||0,jobBal(j)])],"jobs"); },
@@ -675,9 +639,9 @@ function leave(reason){
 }
 $("#signout").onclick=()=>leave("");
 window.addEventListener("pageshow",ev=>{ if(ev.persisted) location.reload(); });
-function stopListeners(){ S.unsubs.forEach(u=>u()); S.unsubs=[]; S.quotes=[]; S.jobs=[]; S.staffList=[]; S.gallery=[]; S.outbox=[]; }
+function stopListeners(){ S.unsubs.forEach(u=>u()); S.unsubs=[]; S.quotes=[]; S.jobs=[]; S.staffList=[]; S.gallery=[]; }
 function listen(name,key,map){
-  S.unsubs.push(onSnapshot(collection(db,name),snap=>{ S[key]=snap.docs.map(d=>map(d.id,d.data())); render(); refreshThread(); },err=>{ console.error(name,err); toast("Cannot load "+name+": "+(err.code==="permission-denied"?"permission denied (check Firestore rules).":err.message),true); }));
+  S.unsubs.push(onSnapshot(collection(db,name),snap=>{ S[key]=snap.docs.map(d=>map(d.id,d.data())); render(); },err=>{ console.error(name,err); toast("Cannot load "+name+": "+(err.code==="permission-denied"?"permission denied (check Firestore rules).":err.message),true); }));
 }
 onAuthStateChanged(auth,async user=>{
   if(leaving) return;
@@ -705,7 +669,6 @@ onAuthStateChanged(auth,async user=>{
   listen("quoteRequests","quotes",(id,d)=>{ const ts=tsOf(d.createdAt); return {id,...d,name:d.name||"",phone:d.phone||"",email:d.email||"",service:d.service||"",details:d.details||"",status:QSTAT[d.status]?d.status:"new",_ts:ts,_date:ymd(new Date(ts))}; });
   listen("jobs","jobs",(id,d)=>({id,...d,title:d.title||"",clientName:d.clientName||"",service:d.service||"Other",status:JSTAT[d.status]?d.status:"scheduled",startDate:d.startDate||"",price:Number(d.price)||0,paid:Number(d.paid)||0}));
   listen("gallery","gallery",(id,d)=>({id,...d,src:d.url||d.image||"",category:GCATS[d.category]?d.category:"repairs",_ts:tsOf(d.createdAt)}));
-  listen("outbox","outbox",(id,d)=>({id,...d,body:d.body||"",status:d.status||"queued",_ts:tsOf(d.createdAt)}));
   if(S.isAdmin) listen("staff","staffList",(id,d)=>({id,...d}));
   if(!PAGES[S.page]||(PAGES[S.page].admin&&!S.isAdmin)) S.page="requests";
   window.__lxlOk=true;
