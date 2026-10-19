@@ -18,10 +18,10 @@
   --black: #0A0A0A;
   --coal: #111111;
   --graphite: #181715;
-  --ivory: #F2EDE3;
-  --mute: #A9A296;
+  --ivory: #FFFFFF;
+  --mute: #E0DBD1;
   --gold: #C9A24B;
-  --gold-hi: #E6C877;
+  --gold-hi: #F2D78A;
   --gold-lo: #8F6F2A;
   --hair: rgba(201,162,75,.28);
   --gold-grad: linear-gradient(120deg, #8F6F2A 0%, #E6C877 38%, #C9A24B 62%, #8F6F2A 100%);
@@ -35,7 +35,7 @@ body {
   margin: 0;
   background: var(--black);
   color: var(--ivory);
-  font: 300 17px/1.7 var(--body);
+  font: 400 17px/1.7 var(--body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -140,7 +140,7 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
   background: linear-gradient(180deg, #F6E3A8 0%, #D4AE5A 52%, #9C7A32 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.hero .lede { margin: 30px auto 0; color: #CFC8BA; text-align: center; }
+.hero .lede { margin: 30px auto 0; color: #FFFFFF; text-align: center; }
 .hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 44px; }
 .hero .tags { margin-top: 64px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font: 400 11px/1 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--gold); }
 .hero .tags span + span::before { content: "\25C6"; margin-right: 28px; font-size: 7px; vertical-align: middle; color: var(--gold-lo); }
@@ -280,7 +280,7 @@ form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22p
 label { font: 400 11px/1.2 var(--body); letter-spacing: .26em; text-transform: uppercase; color: var(--gold); }
 input, select, textarea {
   width: 100%; min-width: 0;
-  padding: 14px 2px; font: 300 16px/1.4 var(--body); color: var(--ivory);
+  padding: 14px 2px; font: 400 16px/1.4 var(--body); color: var(--ivory);
   background: transparent; border: 0; border-bottom: 1px solid rgba(201,162,75,.4); border-radius: 0;
   -webkit-appearance: none; appearance: none;
 }
@@ -308,7 +308,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
 .foot .logo b { font-size: 40px; }
 .foot p, .foot li { font-size: 14px; color: var(--mute); }
 .foot ul { display: grid; gap: 8px; }
-.foot .small { width: 100%; padding-top: 26px; border-top: 1px solid var(--hair); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #7C766B; }
+.foot .small { width: 100%; padding-top: 26px; border-top: 1px solid var(--hair); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #BDB7AB; }
 
 /* about + contact */
 .owner { max-width: 560px; margin: 48px auto 0; padding: 32px 28px; text-align: center; border: 1px solid var(--hair); background: var(--graphite); }
@@ -410,10 +410,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
         <li><span class="si">02</span><h3>Bathroom refurbish</h3><p>Tile, vanities, fixtures and complete bathroom/kitchen upgrades from start to finish.</p></li>
         <li><span class="si">03</span><h3>Drywall</h3><p>Hanging, taping, patching and smooth finishing.</p></li>
         <li><span class="si">04</span><h3>Interior painting</h3><p>Walls, ceilings and trim with clean cut lines.</p></li>
-        <li><span class="si">05</span><h3>Siding</h3><p>Repair and replacement with tight, even lines.</p></li>
-        <li><span class="si">06</span><h3>Roofing</h3><p>Shingle repair and straightforward roof work.</p></li>
-        <li><span class="si">07</span><h3>Gutters</h3><p>Installation, repair and replacement.</p></li>
-        <li><span class="si">08</span><h3>Home repairs</h3><p>Damaged walls, trim, doors, windows and worn finishes.</p></li>
+        <li><span class="si">05</span><h3>Exterior painting</h3><p>Trim, doors, fences and facades prepped and painted to last.</p></li>
+        <li><span class="si">06</span><h3>Flooring</h3><p>Hardwood, laminate, vinyl and tile installation and repair.</p></li>
+        <li><span class="si">07</span><h3>Masonry</h3><p>Brick, block, stone, stoops and pointing repair.</p></li>
+        <li><span class="si">08</span><h3>Gutters</h3><p>Installation, repair and replacement.</p></li>
+        <li><span class="si">09</span><h3>Home repairs</h3><p>Damaged walls, trim, doors, windows and worn finishes.</p></li>
       </ul>
     </div>
   </section>
@@ -430,7 +431,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
             <li><b>Bathrooms</b><span>Repair, restore or refurbish. A tired bathroom rarely needs everything replaced. We fix what has failed and refresh what has dated, or take the whole room back to bare walls when that is the better answer.</span></li>
             <li><b>Refurbish</b><span>Complete bathroom/kitchen upgrades from start to finish</span></li>
             <li><b>Drywall</b><span>Hanging, taping, patching and smooth finishing</span></li>
-            <li><b>Painting</b><span>Walls, ceilings and trim with clean cut lines</span></li>
+            <li><b>Flooring</b><span>Hardwood, laminate, vinyl and tile installation and repair</span></li>
+            <li><b>Interior painting</b><span>Walls, ceilings and trim with clean cut lines</span></li>
           </ul>
         </div>
         <div class="media"><div class="photo tex-a" data-slot="interior" role="img" aria-label="Renovated interior"></div></div>
@@ -442,8 +444,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
           <h3>Exterior <em>upgrades</em></h3>
           <p class="lede">Curb appeal that also protects the house: the layers that keep weather out and make the street notice.</p>
           <ul class="scope">
-            <li><b>Siding</b><span>Repair and replacement with tight, even lines</span></li>
-            <li><b>Basic roofing</b><span>Shingle repair and straightforward roof work</span></li>
+            <li><b>Masonry</b><span>Brick, block and stone work, stoops, steps and pointing repair</span></li>
+            <li><b>Exterior painting</b><span>Prep, prime and paint for trim, doors, fences and facades</span></li>
             <li><b>Gutters</b><span>Installation, repair and replacement</span></li>
           </ul>
         </div>
@@ -498,8 +500,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
             <option value="">Choose one</option>
             <option>Kitchen renovation</option>
             <option>Bathroom repair or refurbish</option>
-            <option>Drywall or painting</option>
-            <option>Siding, roofing or gutters</option>
+            <option>Drywall</option>
+            <option>Interior painting</option>
+            <option>Exterior painting</option>
+            <option>Flooring</option>
+            <option>Masonry</option>
+            <option>Gutters</option>
             <option>General repairs or handyman tasks</option>
             <option>Something else</option>
           </select>
