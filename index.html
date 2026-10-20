@@ -144,6 +144,8 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
 .hero h1 .h1-top { display: block; font-size: .5em; letter-spacing: .18em; line-height: 1.3; margin-bottom: .45em; }
 .hero h1 .h1-main { display: block; font-size: .8em; }
 .hero .lede { margin: 30px auto 0; color: #FFFFFF; text-align: center; }
+.hero .hero-gold { margin: 30px auto 0; text-align: center; text-transform: uppercase; font-size: clamp(20px, 3vw, 34px); letter-spacing: .14em; line-height: 1.3; background: linear-gradient(180deg, #F6E3A8 0%, #D4AE5A 52%, #9C7A32 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 1px 8px rgba(0,0,0,.6)); }
+.hero .hero-gold + .lede { margin-top: 18px; }
 .hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 44px; }
 .hero .tags { margin-top: 64px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font: 400 12.5px/1 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--gold); }
 .hero .tags span + span::before { content: "\25C6"; margin-right: 28px; font-size: 8.5px; vertical-align: middle; color: var(--gold-lo); }
@@ -361,9 +363,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: 
     <div class="hero-photo" data-slot="hero" role="img" aria-label="Finished luxury interior"></div>
     <div class="wrap">
       <h1><span class="h1-top">When it comes to construction</span> <span class="h1-main">LXL is versed like the universe.</span></h1>
-      <p class="lede">Interior renovations, exterior upgrades and everyday repairs for residential homes only, handled with the care of a custom build and priced in writing before work begins.</p>
+      <p class="hero-gold">We Build. We Renovate. We Perfect.</p>
+      <p class="lede">Experience Excellence in Home Building &amp; Remodeling.</p>
       <div class="cta">
-        <a class="btn btn-gold" href="#quote">Request an estimate</a>
+        <a class="btn btn-gold" href="#quote">Schedule Your Consultation Today</a>
       </div>
       <div class="viewwork">
         <p class="viewwork-note">Click here to view our work</p>
