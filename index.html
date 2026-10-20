@@ -149,6 +149,10 @@ h2 em, h1 em { font-style: italic; font-weight: 300; color: var(--gold-hi); }
 .hero .cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 44px; }
 .hero .tags { margin-top: 64px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; font: 400 12.5px/1 var(--body); letter-spacing: .34em; text-transform: uppercase; color: var(--gold); }
 .hero .tags span + span::before { content: "\25C6"; margin-right: 28px; font-size: 8.5px; vertical-align: middle; color: var(--gold-lo); }
+@media (min-width: 561px) {
+  .hero h1 { max-width: none; font-size: min(112px, 4.8vw); }
+  .hero h1 .h1-top, .hero h1 .h1-main { white-space: nowrap; }
+}
 @media (max-width: 560px) {
   .hero { padding: 72px 0 56px; min-height: 0; }
   .hero .tags { gap: 12px 18px; letter-spacing: .22em; }
